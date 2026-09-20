@@ -1,0 +1,48 @@
+generated: '2026-09-19'
+method: searched
+probe: true
+source: https://api.flowhomes.eu/skill.md
+hunt:
+  artifacts_read: [well-known/flowhomes-eu-well-known.yml, security/flowhomes-eu-domain-security.yml, lifecycle/flowhomes-eu-lifecycle.yml, conformance/flowhomes-eu-conformance.yml]
+  paths_probed:
+  - {url: https://api.flowhomes.eu/accessibility, status: 404}
+  - {url: https://api.flowhomes.eu/accessibility/vpat, status: 404}
+  - {url: https://api.flowhomes.eu/legal, status: 404}
+  - {url: https://api.flowhomes.eu/legal/subprocessors, status: 404}
+  - {url: https://api.flowhomes.eu/legal/dpa, status: 404}
+  - {url: https://api.flowhomes.eu/privacy, status: 404}
+  - {url: https://api.flowhomes.eu/privacy/requests, status: 404}
+  - {url: https://api.flowhomes.eu/terms, status: 404}
+  - {url: https://api.flowhomes.eu/transparency, status: 404}
+  - {url: https://api.flowhomes.eu/security, status: 404}
+  - {url: https://api.flowhomes.eu/security/sbom, status: 404}
+  - {url: https://api.flowhomes.eu/.well-known/security.txt, status: 404}
+  - {url: https://api.flowhomes.eu/docs/data-residency, status: 404}
+  - {url: https://api.flowhomes.eu/ai/transparency, status: 404}
+  - {url: https://api.flowhomes.eu/legal/report-content, status: 404}
+  - {url: https://api.flowhomes.eu/trust, status: 404}
+  - {url: https://api.flowhomes.eu/imprint, status: 404}
+  - {url: https://api.flowhomes.eu/impressum, status: 404}
+  - {url: https://api.flowhomes.eu/contact, status: 404}
+  - {url: https://api.flowhomes.eu/about, status: 404}
+  - {url: https://api.flowhomes.eu/skill.md, status: 200}
+  - {url: https://api.flowhomes.eu/llms.txt, status: 200}
+  - {url: https://api.flowhomes.eu/api/club/lounge, status: 200}
+  - {url: https://api.flowhomes.eu/api/amplifier/stats, status: 200}
+  - {url: https://api.flowhomes.eu/.well-known/qorevia-distribution.json, status: 200}
+  - {url: https://flowhomes.eu/, status: 0, note: TLS handshake failure; http 409 Cloudflare error 1001 — no legal pages can exist on the apex}
+  note: >-
+    api.flowhomes.eu publishes no privacy policy, terms of service, imprint, contact address, DPA,
+    subprocessor list, accessibility statement, SBOM, transparency report, data-residency or
+    support-period statement — every conventional path is a real Express 404 and the registrable
+    domain serves nothing. The only privacy-shaped text is embedded in JSON responses: the lounge
+    ("No IPs, cookies, authorization headers or raw gateway queries are stored in lounge entries."),
+    the amplifier/magnet telemetry ("Aggregate-only telemetry. No IP addresses, raw user-agent strings,
+    cookies, authorization headers or finder queries are stored."), the paid data tools ("No external
+    API or data retention." on csv-profile and json-shape) and the distribution beacon's safety block
+    (zeroSpendDefault, noOutboundSpam, noWalletCustody, noPrivateWalletKeysInProject,
+    noAutomaticPriceChanges). These are operational assurances inside API payloads, not a rights
+    channel, a policy or a conformance report, so no signal below is set from them. Note that the
+    public /api/stats and /dashboard expose payer wallet addresses and per-call settlement history —
+    on-chain-public data, recorded here as an observation only. An empty signals map is the finding.
+signals: {}

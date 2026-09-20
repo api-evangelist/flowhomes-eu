@@ -1,0 +1,132 @@
+generated: '2026-09-19'
+method: searched
+source: >-
+  https://api.flowhomes.eu/skill.md (the provider's only prose documentation), openapi/flowhomes-eu-openapi.json,
+  the x402 manifest and beacons, and live unauthenticated responses observed 2026-09-19 (one 402 per
+  method, catalog/finder/router 200s, JSON-RPC probes on /mcp and /a2a). Cross-cutting behaviour that the
+  OpenAPI does not express.
+description: >-
+  How the Qorevia API behaves across every operation: a keyless, pay-per-call x402 surface where the
+  HTTP 402 response IS the access protocol, thirteen stateless computations priced individually, a free
+  discovery layer (REST finder/catalog/router, MCP, A2A) that returns call plans, no idempotency, no
+  versioning, no rate-limit signalling and no error envelope beyond status + one header.
+base_url: https://api.flowhomes.eu
+api_style: REST over HTTPS (Express behind Caddy, HTTP/2 and h3), JSON requests and responses; JSON-RPC 2.0 on /mcp and /a2a
+
+authentication:
+  scheme: none — no API key, token or account. Paid routes are gated by x402 payment, free routes by nothing.
+  payment_as_credential: >-
+    A paid route answers an unpaid request with HTTP 402 and a PAYMENT-REQUIRED header (base64 JSON,
+    x402 v2) naming the exact USDC amount, asset, payTo address, network eip155:8453 and a 300-second
+    timeout; the client pays via an x402 client/facilitator and retries the same request with a
+    PAYMENT-SIGNATURE header. "No API key required for paid routes" (agent card, skill qorevia-x402-seller).
+  docs: https://api.flowhomes.eu/skill.md
+  detail: authentication/flowhomes-eu-authentication.yml
+
+idempotency:
+  coverage: none
+  header: null
+  scope: []
+  retention: null
+  detail: >-
+    No Idempotency-Key or equivalent on any operation and no replay guidance. The 13 paid POST routes
+    (risk_levels, strategy_grade, csv_profile, json_shape, jwt_decode, tick_pnl, evm_address_syntax,
+    ohlcv_state, regex_test) are pure computations over the request body with no server-side state, so
+    a retry recomputes rather than duplicates — but each retry is a NEW x402 payment; nothing documents
+    whether a PAYMENT-SIGNATURE replayed within maxTimeoutSeconds is honoured once or charged twice. The
+    two stateful writes (POST /api/club/referral/create — documented as "deterministic ... for a public
+    wallet", so the same wallet yields the same code; POST /api/club/lounge/check-in) carry no key.
+  x402_timeout_seconds: 300
+
+dry_run_mode:
+  status: partial
+  detail: >-
+    No dry-run parameter exists, but two free preflights are documented and observed: (1) the finder/
+    router/catalog (REST, MCP qorevia_route, A2A message/send) return the exact route, price, inputSchema,
+    exampleInput and outputExample for a tool before any payment; (2) the unpaid request itself returns
+    402 with the price, the payTo and — in the "bazaar" extension — the input/output schema, at no cost.
+    An agent can therefore learn everything except the live result without spending. GET /health
+    exposes whether the MT5 terminal is connected so an agent can avoid paying for a route that would 503.
+  docs: https://api.flowhomes.eu/.well-known/qorevia-router.json
+
+reversibility:
+  grade: none
+  detail: >-
+    Nothing is reversible and nothing says so in as many words. The paid calls are read-only computations
+    and market-data reads with no side effect to reverse; the payment attached to each is an on-chain
+    USDC transfer on Base Mainnet, and no refund, dispute, credit or cancellation path is published on any
+    served surface (no terms page exists; the only money-safety statements are the distribution beacon's
+    safety block: zeroSpendDefault, noWalletCustody, noAutomaticPriceChanges). The MT5 503-without-402
+    behaviour is a pre-payment guard, not a reversal. The two free writes (referral code, lounge check-in)
+    have no delete or undo operation. No window is stated anywhere, so nothing here can be graded above
+    none; this file asserts no window.
+  write_surfaces:
+  - {action: 'any of the 13 paid operations (x402 payment)', reversal: none documented, window: null, docs: 'https://api.flowhomes.eu/skill.md — describes pay-and-retry only'}
+  - {action: 'POST /api/club/referral/create', reversal: none, window: null, note: 'deterministic per wallet; re-creating returns the same code'}
+  - {action: 'POST /api/club/lounge/check-in', reversal: none, window: null}
+  read_only_surface: 'GET routes and the discovery layer (MCP, A2A) — reversibility na for these'
+
+pagination:
+  style: offset
+  applies_to: ['GET /api/catalog', 'MCP qorevia_catalog']
+  request_params:
+    offset: integer, default 0
+    limit: integer 1-100, default 50
+    q: optional keyword filter
+    category: optional category filter
+  response_fields:
+    ok: boolean
+    total: integer (13 as of 2026-09-19)
+    offset: echoed
+    limit: echoed
+    items: array of catalog items
+  note: The finder (GET /api/find) takes limit 1-20 and returns ranked matches[]; nothing else is a list.
+
+field_expansion:
+  supported: false
+
+metadata:
+  supported: false
+
+request_id:
+  supported: false
+  detail: No request or trace id header is returned; responses carry only etag, content-type, date, via (Caddy) and, on 402, payment-required and cache-control no-store.
+
+versioning:
+  scheme: none on the wire (unversioned /api/... paths, no version header)
+  document_versions: 'OpenAPI info.version 2.0.0; gateway/agent card 3.7.2; MCP serverInfo 3.5.0'
+  detail: lifecycle/flowhomes-eu-lifecycle.yml
+
+error_envelope:
+  shape: none uniform — status + PAYMENT-REQUIRED header with {} body on 402; {ok:false, reason|error} with HTTP 200 on free JSON routes; JSON-RPC error objects on /mcp and /a2a; HTML on unknown paths
+  problem_json: false
+  detail: errors/flowhomes-eu-problem-types.yml
+
+rate_limiting:
+  published: false
+  headers: none observed (no RateLimit-*, X-RateLimit-*, Retry-After); no 429 in the contract
+  detail: rate-limits/flowhomes-eu-rate-limits.yml
+
+payment_semantics:
+  protocol: x402 v2
+  network: eip155:8453 (Base Mainnet)
+  asset: USDC 0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913
+  pay_to: '0x80cdA9077d65Ac1a05454619Bb94B318cf0c3382'
+  facilitator: https://facilitator.payai.network
+  request_header: PAYMENT-SIGNATURE (retry)
+  response_header: PAYMENT-REQUIRED (402, base64 JSON)
+  price_discovery: ['x402 manifest resources[].price', 'openapi x-payment-info.price', 'catalog priceUsd', 'the 402 accepts[].amount']
+  referral_attribution: '?ref=QF-XXXXXXXXXX query parameter or X-Qorevia-Ref header on a paid call (Founders Network)'
+  docs: https://api.flowhomes.eu/skill.md
+
+content_negotiation:
+  request: application/json bodies on POST routes; query parameters on GET routes
+  response: application/json; charset=utf-8 (paid and free JSON routes); text/plain llms.txt and robots; text/markdown skill.md
+  encoding_note: skill.md and the landing page are served with double-encoded em dashes (â€”) — a text defect, not a protocol one.
+
+agent_surfaces:
+  mcp: https://api.flowhomes.eu/mcp (POST-only Streamable HTTP, 4 free discovery tools)
+  a2a: https://api.flowhomes.eu/a2a (JSON-RPC message/send + tasks/get; card at /.well-known/agent-card.json)
+  llms_txt: https://api.flowhomes.eu/llms.txt
+  skill_md: https://api.flowhomes.eu/skill.md
+  detail: [mcp/flowhomes-eu-mcp.yml, mcp/flowhomes-eu-tool-crosswalk.yml, a2a/flowhomes-eu-a2a.yml]

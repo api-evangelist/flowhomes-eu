@@ -1,0 +1,65 @@
+generated: '2026-09-19'
+method: probed
+source: https://api.flowhomes.eu/.well-known/x402
+docs: https://api.flowhomes.eu/
+plan_count: 2
+currency_note: >-
+  Prices are stated in USD ("$0.005") and settled in USDC on Base Mainnet (eip155:8453) — the live 402
+  requirement quotes the same value in USDC base units (amount "5000" for $0.005, asset
+  0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913). There are no accounts, subscriptions, tiers by volume,
+  quotas or overage: every paid call is priced individually and paid before it is served.
+note: >-
+  Read from the provider's machine-readable x402 v2 manifest (resources[13] with price, freeResources[24])
+  and cross-checked against the landing page, skill.md, llms.txt, GET /api/catalog (priceUsd per item)
+  and one live 402 (session-state, amount 5000). All five sources agree. The "Founders Network" tiers
+  (FOUNDING_AGENT 1+ paid call; INSIDER_AGENT 10+ paid calls or 3+ referred payers; QOREVIA_PRIME 100+
+  or 20+) are recognition tiers earned by payment history and carry no price change — the distribution
+  beacon states noAutomaticPriceChanges: true. No enterprise or contact-sales offer exists.
+plans:
+- id: free-discovery
+  name: Free discovery and routing
+  price: 0
+  currency: USD
+  billing_period: per call
+  included_quota: unlimited (no published cap)
+  overage: null
+  includes:
+  - GET /health, /openapi.json, /skill.md, /llms.txt, /dashboard, /party
+  - GET /api/find, POST /api/route, GET /api/catalog, GET /api/try
+  - POST /mcp (4 tools) and POST /a2a (10 skills)
+  - The agent card, the four qorevia-* beacons, /api/magnet + stats, /api/amplifier/stats
+  - Founders Network routes (/api/club, status, referral create/status, lounge, check-in)
+  limits: 'find limit 1-20; catalog limit 1-100; no rate limit published'
+  source: https://api.flowhomes.eu/.well-known/x402#freeResources
+- id: pay-per-call-x402
+  name: Pay-per-call (x402, USDC on Base)
+  price: 0.0025-0.05 per call (see items)
+  currency: USD (settled as USDC, eip155:8453)
+  billing_period: per call, paid before the response
+  included_quota: null
+  overage: null
+  payment:
+    protocol: x402 v2
+    network: eip155:8453
+    asset: USDC 0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913
+    pay_to: '0x80cdA9077d65Ac1a05454619Bb94B318cf0c3382'
+    facilitator: https://facilitator.payai.network
+    max_timeout_seconds: 300
+    api_key_required: false
+  items:
+  - {operationId: session_state, route: 'GET /api/session-state', price: 0.005}
+  - {operationId: risk_levels, route: 'POST /api/risk-levels', price: 0.005}
+  - {operationId: strategy_grade, route: 'POST /api/strategy-grade', price: 0.02}
+  - {operationId: xau_quote, route: 'GET /api/xau/quote', price: 0.01}
+  - {operationId: xau_bars, route: 'GET /api/xau/bars', price: 0.02}
+  - {operationId: xau_market_state, route: 'GET /api/xau/market-state', price: 0.03}
+  - {operationId: csv_profile, route: 'POST /api/csv-profile', price: 0.0025}
+  - {operationId: json_shape, route: 'POST /api/json-shape', price: 0.0025}
+  - {operationId: jwt_decode, route: 'POST /api/jwt-decode', price: 0.0025}
+  - {operationId: tick_pnl, route: 'POST /api/tick-pnl', price: 0.05}
+  - {operationId: evm_address_syntax, route: 'POST /api/evm-address-syntax', price: 0.01}
+  - {operationId: ohlcv_state, route: 'POST /api/ohlcv-state', price: 0.0025}
+  - {operationId: regex_test, route: 'POST /api/regex-test', price: 0.0034}
+  limits: 'No quota; MT5 routes return 503 without a charge when the terminal is down'
+  refunds: 'None published. On-chain USDC settlement is final; no refund, dispute or credit mechanism is documented anywhere on the host.'
+  source: https://api.flowhomes.eu/.well-known/x402#resources

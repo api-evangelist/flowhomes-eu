@@ -64,5 +64,21 @@
 > Full detail: **[Where this data comes from](https://apievangelist.com/about/where-our-data-comes-from)**
 <!-- API-EVANGELIST-PROVENANCE:END -->
 
-Qorevia is a company surfaced via the API Evangelist harvest backlog (source: a2a-registry) and added to the network as a stub for full-pipeline profiling.
-- https://flowhomes.eu/
+Qorevia ("Qorevia Market Intelligence", operated from api.flowhomes.eu) is an agent-native, pay-per-call API seller: thirteen deterministic market-intelligence, data-profiling and developer utility tools — live XAUUSD (gold) quote, OHLCV bars and market state from a read-only MetaTrader 5 terminal, session state, risk levels, a strategy grade, tick PnL, CSV/JSON profiling, JWT decode, EVM address syntax and regex testing — each priced $0.0025–$0.05 and settled per call in USDC on Base Mainnet through x402 v2. No accounts, no API keys. The registrable domain flowhomes.eu serves no website (TLS handshake fails; HTTP returns Cloudflare error 1001), so every surface lives on api.flowhomes.eu.
+
+What this profile found (2026-09-19):
+
+- **Contract** — OpenAPI 3.1.0 "Qorevia Market Intelligence" 2.0.0 at `https://api.flowhomes.eu/openapi.json`: 34 paths, 13 priced operations with operationIds, examples and an `x-payment-info` block (402 + 503 declared), 21 free discovery/club paths without operationIds. Saved verbatim in `openapi/`.
+- **x402** — a v2 service manifest at `/.well-known/x402` (one rail: USDC on eip155:8453, facilitator payai.network; 13 priced + 24 free resources) and a live 402 with a `PAYMENT-REQUIRED` header decoded and recorded in `conformance/`, `errors/`, `authentication/` and `plans/`.
+- **MCP** — a remote Streamable HTTP server at `/mcp` answering initialize (2025-06-18) and tools/list anonymously with four free discovery tools; listed in the Official MCP Registry. Details in `mcp/` with a crosswalk to the REST routes.
+- **A2A** — a 1.0-shaped agent card at `/.well-known/agent-card.json` (ten skills; the legacy `agent.json` is byte-identical), graded conformant, with a live JSON-RPC endpoint at `/a2a` that completed a `message/send`. See `a2a/`.
+- **Agent docs** — provider-authored `skill.md` and `llms.txt` saved verbatim in `skills/` and `llms/`; two generated skills grounded in the spec's operationIds.
+- **Absent** — security.txt, OAuth/OIDC/RFC 9728 metadata, api-catalog, APIs.json, terms, privacy, contact, SDKs, rate limits, idempotency, refunds, status page. Each absence is recorded with the probe that established it.
+
+Links:
+
+- Website / API host: https://api.flowhomes.eu/
+- OpenAPI: https://api.flowhomes.eu/openapi.json
+- skill.md: https://api.flowhomes.eu/skill.md
+- x402 manifest: https://api.flowhomes.eu/.well-known/x402
+- MCP: https://api.flowhomes.eu/mcp · A2A card: https://api.flowhomes.eu/.well-known/agent-card.json

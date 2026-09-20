@@ -1,0 +1,47 @@
+# Qorevia Market Intelligence
+
+Public x402 pay-per-call market intelligence API for autonomous agents.
+
+Base URL: https://api.flowhomes.eu
+Network: Base Mainnet (eip155:8453)
+Payment: USDC via x402 v2
+
+Discovery:
+https://api.flowhomes.eu/openapi.json
+https://api.flowhomes.eu/.well-known/x402
+https://api.flowhomes.eu/skill.md
+
+Services: session-state, risk-levels, strategy-grade, XAUUSD quote, XAUUSD OHLCV bars, XAUUSD market-state.
+
+Keywords: XAUUSD, gold, trading, finance, market data, OHLCV, volatility, ATR, London session, risk management, quantitative research, autonomous agents, x402, USDC
+
+- POST https://api.flowhomes.eu/api/csv-profile - local CSV profiling - $0.0025 USDC via x402
+- POST https://api.flowhomes.eu/api/json-shape - local JSON structural profiling - $0.0025 USDC via x402
+
+# BEGIN QOREVIA AUTO PRODUCTS
+- POST /api/jwt-decode - # BEGIN QOREVIA AUTO PRODUCTS
+- POST /api/jwt-decode - $0.0025 USDC - Decode JWT header and payload without signature verification
+- POST /api/tick-pnl - $0.05 USDC - Calculate PnL from entry exit contracts tick size and tick value
+- POST /api/evm-address-syntax - $0.01 USDC - Validate basic EVM 20-byte hex address syntax
+# END QOREVIA AUTO PRODUCTS.0025 USDC - Decode JWT header and payload without signature verification
+- POST /api/tick-pnl - # BEGIN QOREVIA AUTO PRODUCTS
+- POST /api/jwt-decode - $0.0025 USDC - Decode JWT header and payload without signature verification
+- POST /api/tick-pnl - $0.05 USDC - Calculate PnL from entry exit contracts tick size and tick value
+- POST /api/evm-address-syntax - $0.01 USDC - Validate basic EVM 20-byte hex address syntax
+# END QOREVIA AUTO PRODUCTS.05 USDC - Calculate PnL from entry exit contracts tick size and tick value
+- POST /api/evm-address-syntax - # BEGIN QOREVIA AUTO PRODUCTS
+- POST /api/jwt-decode - $0.0025 USDC - Decode JWT header and payload without signature verification
+- POST /api/tick-pnl - $0.05 USDC - Calculate PnL from entry exit contracts tick size and tick value
+- POST /api/evm-address-syntax - $0.01 USDC - Validate basic EVM 20-byte hex address syntax
+# END QOREVIA AUTO PRODUCTS.01 USDC - Validate basic EVM 20-byte hex address syntax
+- POST /api/ohlcv-state - # BEGIN QOREVIA AUTO PRODUCTS
+- POST /api/jwt-decode - $0.0025 USDC - Decode JWT header and payload without signature verification
+- POST /api/tick-pnl - $0.05 USDC - Calculate PnL from entry exit contracts tick size and tick value
+- POST /api/evm-address-syntax - $0.01 USDC - Validate basic EVM 20-byte hex address syntax
+# END QOREVIA AUTO PRODUCTS.0025 USDC - Compute simple return range position and true-range average from supplied OHLCV bars
+- POST /api/regex-test - # BEGIN QOREVIA AUTO PRODUCTS
+- POST /api/jwt-decode - $0.0025 USDC - Decode JWT header and payload without signature verification
+- POST /api/tick-pnl - $0.05 USDC - Calculate PnL from entry exit contracts tick size and tick value
+- POST /api/evm-address-syntax - $0.01 USDC - Validate basic EVM 20-byte hex address syntax
+# END QOREVIA AUTO PRODUCTS.0034 USDC - Run a supplied JavaScript regular expression against supplied text
+# END QOREVIA AUTO PRODUCTS

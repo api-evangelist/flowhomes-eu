@@ -1,23 +1,221 @@
 aid: flowhomes-eu
 name: Qorevia
-description: 'Qorevia is a company surfaced via the API Evangelist harvest backlog (source: a2a-registry)
-  and added to the network as a stub for full-pipeline profiling.'
+description: >-
+  Qorevia ("Qorevia Market Intelligence", operated from api.flowhomes.eu) is an agent-native,
+  pay-per-call API seller: thirteen deterministic market-intelligence, data-profiling and developer
+  utility tools — live XAUUSD (gold) quote, OHLCV bars and computed market state read from a read-only
+  MetaTrader 5 terminal, trading-session state in Europe/Vienna time, stop/target risk levels, a
+  strategy robustness grade, tick PnL, OHLCV state, CSV and JSON structural profiling, JWT decode,
+  EVM address syntax and regex testing — each priced between $0.0025 and $0.05 and settled per call
+  in USDC on Base Mainnet (eip155:8453) through the x402 v2 protocol (HTTP 402 -> pay -> retry with
+  PAYMENT-SIGNATURE), with no accounts and no API keys. Discovery is free and unusually complete: an
+  OpenAPI 3.1.0 contract at /openapi.json, an x402 manifest at /.well-known/x402, a remote MCP server
+  at /mcp (four free finder/router/catalog tools, listed in the Official MCP Registry), an A2A 1.0
+  agent card at /.well-known/agent-card.json backed by a live JSON-RPC endpoint at /a2a, a skill.md,
+  an llms.txt, a natural-language finder (/api/find) and a "Founders Network" whose tiers derive from
+  verified x402 payment history. The registrable domain flowhomes.eu does not serve a website (TLS
+  handshake fails; HTTP returns Cloudflare error 1001), so every surface lives on api.flowhomes.eu.
 url: https://raw.githubusercontent.com/api-evangelist/flowhomes-eu/refs/heads/main/apis.yml
 x-type: company
 x-source: harvest:a2a-registry
-x-tier: stub
-x-tier-reason: harvest
+x-tier: profiled
+x-tier-reason: enrichment pass 2026-09-19 (local-v3; was a2a-registry harvest stub)
 specificationVersion: '0.20'
 created: '2026-09-19'
 modified: '2026-09-19'
 tags:
-- Company
-apis: []
+- Market Data
+- Gold
+- XAUUSD
+- Trading
+- Finance
+- Quantitative Research
+- Risk Management
+- Data Profiling
+- Developer Tools
+- x402
+- USDC
+- Base L2
+- Agent Commerce
+- Pay Per Call
+- MCP
+- A2A
+- Agents
+- agent-native
+tags_raw:
+- Market data
+- Gold
+- XAUUSD
+- Trading
+- Finance
+- Quantitative research
+- Risk management
+- Data profiling
+- Developer tools
+- x402
+- USDC
+- Base L2
+- Agent commerce
+- Pay-per-call
+- MCP
+- A2A
+- Agents
+- Agent-native
+apis:
+- aid: flowhomes-eu:qorevia-market-intelligence-api
+  name: Qorevia Market Intelligence API
+  description: >-
+    The x402 pay-per-call REST surface, published as OpenAPI 3.1.0 "Qorevia Market Intelligence" 2.0.0
+    at https://api.flowhomes.eu/openapi.json (servers https://api.flowhomes.eu; 34 paths). Thirteen
+    priced operations carry operationIds and an x-payment-info block (price, USDC, eip155:8453, x402):
+    session_state, risk_levels, strategy_grade, xau_quote, xau_bars, xau_market_state, csv_profile,
+    json_shape, jwt_decode, tick_pnl, evm_address_syntax, ohlcv_state and regex_test. Each declares
+    200 (paid response, with example), 402 (x402 payment required) and 503 (MT5 upstream unavailable —
+    "payment is not requested for MT5 routes during preflight failure"). The remaining 21 paths are
+    the free discovery, router, beacon and Founders Network routes (no operationIds). Probed
+    2026-09-19: an unpaid GET /api/session-state returns HTTP 402 with an empty JSON body and a
+    base64 PAYMENT-REQUIRED header decoding to an x402Version 2 envelope (scheme exact, network
+    eip155:8453, amount 5000 = $0.005 in USDC 0x8335...2913, payTo 0x80cd...3382, maxTimeoutSeconds
+    300, plus a "bazaar" extension carrying the input/output schema). No securitySchemes are declared:
+    there is no API key; payment is the credential.
+  humanURL: https://api.flowhomes.eu/
+  baseURL: https://api.flowhomes.eu
+  tags:
+  - Market Data
+  - XAUUSD
+  - Trading
+  - Data Profiling
+  - Developer Tools
+  - x402
+  properties:
+  - type: OpenAPI
+    url: openapi/flowhomes-eu-openapi.json
+  - type: OpenAPI
+    name: Qorevia Market Intelligence 2.0.0 (provider-hosted)
+    url: https://api.flowhomes.eu/openapi.json
+  - type: APIReference
+    name: Landing page listing every route, method and per-call price
+    url: https://api.flowhomes.eu/
+  - type: Documentation
+    name: skill.md — agent-facing documentation
+    url: https://api.flowhomes.eu/skill.md
+  - type: X-X402Discovery
+    name: x402 v2 service manifest (rails, 13 priced resources, 24 free resources)
+    url: https://api.flowhomes.eu/.well-known/x402
+  - type: X-X402Discovery
+    url: well-known/flowhomes-eu-x402.json
+  - type: Overlay
+    url: overlays/flowhomes-eu-openapi-overlay.yaml
+  - type: ErrorCatalog
+    url: errors/flowhomes-eu-problem-types.yml
+  - type: DataModel
+    url: data-model/flowhomes-eu-data-model.yml
+- aid: flowhomes-eu:qorevia-universal-agent-gateway
+  name: Qorevia Universal Agent Gateway (MCP + A2A)
+  description: >-
+    The free discovery and routing layer in front of the paid tools, served from the same origin. MCP:
+    https://api.flowhomes.eu/mcp is POST-only Streamable HTTP (GET 404), answers initialize with
+    protocolVersion 2025-06-18 and serverInfo {qorevia-universal-gateway 3.5.0}, and tools/list
+    anonymously with four tools carrying real inputSchemas — qorevia_find, qorevia_route,
+    qorevia_catalog, qorevia_tool_info; resources/list and prompts/list return -32601. A tools/call
+    of qorevia_find ("profile csv data") returned the csv-profile route plan with price and schema at
+    no cost. Listed in the Official MCP Registry as eu.flowhomes.api/qorevia-market-intelligence
+    (3.7.2, published 2026-09-19). A2A: the card at /.well-known/agent-card.json (also byte-identical at
+    the legacy /.well-known/agent.json) is 1.0-shaped — supportedInterfaces[] {JSONRPC, protocolVersion
+    1.0, url https://api.flowhomes.eu/a2a}, capabilities object, ten skills — and the endpoint is live: a
+    message/send with "Find a tool to profile CSV data" returned a completed task whose
+    qorevia-route-plan artifact carried the same csv-profile match; tasks/get returns -32001 Task not
+    found for unknown ids. Every surface here is free; the tools they route to are x402-paid.
+  humanURL: https://api.flowhomes.eu/skill.md
+  baseURL: https://api.flowhomes.eu
+  tags:
+  - MCP
+  - A2A
+  - Agents
+  - Tool Discovery
+  - x402
+  properties:
+  - type: MCPServer
+    url: mcp/flowhomes-eu-mcp.yml
+  - type: MCPServer
+    name: Qorevia MCP endpoint (Streamable HTTP, POST-only)
+    url: https://api.flowhomes.eu/mcp
+  - type: ToolCrosswalk
+    url: mcp/flowhomes-eu-tool-crosswalk.yml
+  - type: AgentCard
+    url: a2a/flowhomes-eu-a2a.yml
+  - type: AgentCard
+    name: A2A Agent Card (provider-hosted)
+    url: https://api.flowhomes.eu/.well-known/agent-card.json
+  - type: Documentation
+    url: https://api.flowhomes.eu/skill.md
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
 - FN: APIs.json
   email: info@apis.io
 common:
+- type: AgenticAccess
+  url: agentic-access/flowhomes-eu-agentic-access.yml
+- type: DomainSecurity
+  url: security/flowhomes-eu-domain-security.yml
 - type: Website
-  url: https://flowhomes.eu/
+  name: api.flowhomes.eu — the provider's declared URL (agent card provider.url, MCP Registry websiteUrl); the apex flowhomes.eu does not serve a site
+  url: https://api.flowhomes.eu/
+- type: Documentation
+  url: https://api.flowhomes.eu/skill.md
+- type: APIReference
+  url: https://api.flowhomes.eu/
+- type: GettingStarted
+  name: Free capability preview (JSON) — finder, catalog, router feed, MCP and A2A entry points
+  url: https://api.flowhomes.eu/api/try
+- type: Pricing
+  name: Per-call USDC prices are listed on the landing page and in the x402 manifest
+  url: https://api.flowhomes.eu/
+- type: LLMsTxt
+  url: llms/flowhomes-eu-llms.txt
+- type: LLMsTxt
+  name: llms.txt (provider-hosted)
+  url: https://api.flowhomes.eu/llms.txt
+- type: WellKnown
+  url: well-known/flowhomes-eu-well-known.yml
+- type: AgentCard
+  url: a2a/flowhomes-eu-a2a.yml
+- type: MCPServer
+  url: mcp/flowhomes-eu-mcp.yml
+- type: ToolCrosswalk
+  url: mcp/flowhomes-eu-tool-crosswalk.yml
+- type: AgentSkill
+  url: skills/_index.yml
+- type: AgentSkill
+  name: skill.md (provider-hosted)
+  url: https://api.flowhomes.eu/skill.md
+- type: Authentication
+  url: authentication/flowhomes-eu-authentication.yml
+- type: Conventions
+  url: conventions/flowhomes-eu-conventions.yml
+- type: ErrorCatalog
+  url: errors/flowhomes-eu-problem-types.yml
+- type: Lifecycle
+  url: lifecycle/flowhomes-eu-lifecycle.yml
+- type: ChangeLog
+  url: changelog/flowhomes-eu-changelog.yml
+- type: Conformance
+  url: conformance/flowhomes-eu-conformance.yml
+- type: Plans
+  url: plans/flowhomes-eu-plans-pricing.yml
+- type: RateLimits
+  url: rate-limits/flowhomes-eu-rate-limits.yml
+- type: Packages
+  url: packages/flowhomes-eu-packages.yml
+- type: DataModel
+  url: data-model/flowhomes-eu-data-model.yml
+- type: RegulatoryPosture
+  url: regulatory/flowhomes-eu-regulatory-posture.yml
+- type: X-X402Discovery
+  url: well-known/flowhomes-eu-x402.json
+x-enrichment:
+  date: '2026-09-19'
+  status: enriched
+  artifacts_added: 33
+  pass: local-v3

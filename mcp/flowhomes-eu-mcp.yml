@@ -1,0 +1,109 @@
+generated: '2026-09-19'
+method: probed
+status: published
+source: https://api.flowhomes.eu/mcp
+docs: https://api.flowhomes.eu/skill.md
+summary: >-
+  Qorevia ships ONE remote MCP server at https://api.flowhomes.eu/mcp — the same origin that serves the
+  OpenAPI, the A2A endpoint and the website — as POST-only Streamable HTTP (a GET returns the Express
+  HTML 404). Probed 2026-09-19 anonymously: initialize answers protocolVersion 2025-06-18 with serverInfo
+  {name: qorevia-universal-gateway, version: 3.5.0}, capabilities {tools: {}} and the instruction "Use
+  qorevia_find or qorevia_route to locate a paid x402 tool. The discovery MCP surface itself is free.";
+  tools/list returns four tools, each with a real JSON-Schema inputSchema, plus ttlMs 300000 and
+  cacheScope public; resources/list and prompts/list return -32601 Method not found. A tools/call of
+  qorevia_find {query: "profile csv data", limit: 2} returned a text content block whose JSON carried the
+  csv-profile route (POST /api/csv-profile, priceUsd 0.0025, eip155:8453, inputSchema, examples) at no
+  cost. The server is a DISCOVERY gateway: none of its tools executes a paid route; they return a
+  machine-ready call plan an agent then performs over REST, paying via x402. Listed in the Official MCP
+  Registry as eu.flowhomes.api/qorevia-market-intelligence (title "Qorevia Market Intelligence", version
+  3.7.2, status active, published 2026-09-19T18:03:07Z, remotes [{streamable-http,
+  https://api.flowhomes.eu/mcp}]); the host serves the registry's DNS/HTTP ownership proof at
+  /.well-known/mcp-registry-auth (v=MCPv1; k=ed25519). Authorship is the provider's: tool names, the
+  catalog they read and the REST routes they point at are all Qorevia's own.
+deployment:
+  mode: remote
+  endpoint: https://api.flowhomes.eu/mcp
+  install: null
+  package: null
+  auth: none
+  verified: probed
+  note: >-
+    auth is "none" in the connection sense — initialize, tools/list and tools/call need no credential, and
+    no OAuth metadata is served (/.well-known/oauth-authorization-server, /.well-known/oauth-protected-resource
+    and /.well-known/openid-configuration are all real 404s on this host, which is the MCP host). The
+    paid routes the tools point at are gated by x402 PAYMENT on the REST surface, not by any MCP
+    authentication. No stdio package exists: npm and PyPI have no qorevia/flowhomes package and there is
+    no GitHub organisation.
+servers:
+- id: qorevia-remote
+  name: qorevia-universal-gateway
+  endpoint: https://api.flowhomes.eu/mcp
+  transport: streamable-http
+  http_methods: [POST]
+  auth: none
+  payment: none on the MCP surface; the REST routes it returns are x402-paid (USDC on Base, eip155:8453)
+  status: live
+  authorship: provider
+  probe:
+    fetched: '2026-09-19'
+    initialize:
+      http_status: 200
+      protocol_version: '2025-06-18'
+      server_info: {name: qorevia-universal-gateway, version: 3.5.0}
+      capabilities: {tools: {}}
+      instructions: 'Use qorevia_find or qorevia_route to locate a paid x402 tool. The discovery MCP surface itself is free.'
+    tools_list:
+      http_status: 200
+      content_type: application/json; charset=utf-8
+      tool_count: 4
+      file: mcp/flowhomes-eu-mcp-tools.json
+      extra_fields: {ttlMs: 300000, cacheScope: public}
+      note: Every tool has name, description and inputSchema; no annotations, no title, no outputSchema.
+    tools_call:
+      tool: qorevia_find
+      arguments: {query: profile csv data, limit: 2}
+      http_status: 200
+      result_summary: 'content[0].type text; JSON with ok true, category data, matches[csv-profile (POST /api/csv-profile, $0.0025), json-shape] each with inputSchema, exampleInput, outputExample, matchScore, matchedTokens'
+    resources_list: {http_status: 200, error: '-32601 Method not found'}
+    prompts_list: {http_status: 200, error: '-32601 Method not found'}
+    get_request: {http_status: 404, body: 'Express HTML "Cannot GET /mcp"'}
+  registries:
+  - name: Official MCP Registry
+    id: eu.flowhomes.api/qorevia-market-intelligence
+    probed: https://registry.modelcontextprotocol.io/v0/servers?search=qorevia
+    http_status: 200
+    version: 3.7.2
+    status: active
+    published_at: '2026-09-19T18:03:07Z'
+    website_url: https://api.flowhomes.eu
+    remotes: [{type: streamable-http, url: 'https://api.flowhomes.eu/mcp'}]
+    ownership_proof: {path: /.well-known/mcp-registry-auth, http_status: 200, file: well-known/flowhomes-eu-mcp-registry-auth.txt}
+tools:
+- name: qorevia_find
+  description: Find the best Qorevia x402 tool for a natural-language need. Free discovery only.
+  input_schema: {type: object, properties: {query: {type: string}, limit: {type: integer, minimum: 1, maximum: 20}}, required: [query]}
+  backing_rest: GET /api/find?q=&limit=
+- name: qorevia_route
+  description: Return a machine-ready call plan for the best matching Qorevia x402 endpoint.
+  input_schema: {type: object, properties: {query: {type: string}, input: {type: object}}, required: [query]}
+  backing_rest: POST /api/route
+- name: qorevia_catalog
+  description: Browse Qorevia live paid tools.
+  input_schema: {type: object, properties: {q: {type: string}, category: {type: string}, offset: {type: integer}, limit: {type: integer, minimum: 1, maximum: 100}}}
+  backing_rest: GET /api/catalog
+- name: qorevia_tool_info
+  description: Get one Qorevia tool definition by path or key.
+  input_schema: {type: object, properties: {pathOrKey: {type: string}}, required: [pathOrKey]}
+  backing_rest: GET /api/catalog (single item by key or path)
+tools_summary:
+  count: 4
+  paid_tools_reachable_through_mcp: 0
+  catalog_routed_to: 13 x402-paid REST operations (see openapi/flowhomes-eu-openapi.json)
+  crosswalk: mcp/flowhomes-eu-tool-crosswalk.yml
+  note: >-
+    The MCP surface exposes discovery only. Executing any of the 13 catalog tools means leaving MCP,
+    calling the REST route, receiving HTTP 402, paying in USDC on Base via x402 and retrying with
+    PAYMENT-SIGNATURE — a flow the MCP server describes but does not perform.
+web_mcp: null
+clients_documented:
+- {client: any MCP host by URL, docs: 'https://api.flowhomes.eu/skill.md', config: 'https://api.flowhomes.eu/mcp (Streamable HTTP, no auth)'}

@@ -1,0 +1,13 @@
+generated: '2026-09-19'
+method: searched
+source: https://api.flowhomes.eu/skill.md
+note: >-
+  Qorevia ships no client library, SDK, CLI or MCP package on any public registry. Searched
+  2026-09-19: registry.npmjs.org search "qorevia" and "flowhomes" return nothing; pypi.org/pypi/qorevia/json
+  is a 404; github.com has no qorevia or flowhomes organisation or user (both 404) and the three
+  repositories named "Qorevia"/"QOREVIA" are an unrelated Kotlin/Android project; no Maven, NuGet, Go,
+  RubyGems, Packagist or crates.io hit; skill.md, llms.txt and the beacons name no package. The provider's
+  documented client story is protocol-level: any x402 client (the manifest names the PayAI facilitator)
+  plus plain HTTP, any MCP host pointed at https://api.flowhomes.eu/mcp, or any A2A client pointed at the
+  card. sdk_count 0; no SDKs pointer is emitted.
+packages: []

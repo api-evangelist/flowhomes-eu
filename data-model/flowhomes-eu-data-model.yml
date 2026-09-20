@@ -1,0 +1,52 @@
+generated: '2026-09-19'
+method: derived
+source: >-
+  openapi/flowhomes-eu-openapi.json (components is empty — every schema is inline, no $ref), the x402
+  manifest well-known/flowhomes-eu-x402.json, GET /api/catalog items[], the 402 PAYMENT-REQUIRED envelope
+  and the Founders Network documents (/api/club, /.well-known/qorevia-club.json), 2026-09-19. A
+  catalog-of-tools model rather than a resource graph: nothing is created, stored or addressed by id
+  except referral codes and lounge entries.
+entities:
+- name: Tool
+  aliases: [catalog item, x402 resource]
+  identity: key (e.g. csv-profile) and path (/api/csv-profile); the OpenAPI operationId (csv_profile) is a third spelling
+  fields: [key, name, method, path, url, priceUsd, network, description, 'tags[]', inputSchema, exampleInput, outputExample]
+  sources: ['GET /api/catalog items[]', '/.well-known/x402 resources[]', 'openapi paths (13 with operationId + x-payment-info)']
+  count: 13
+- name: PaymentRequirement
+  aliases: [x402 402 envelope]
+  identity: none (per response)
+  fields: [x402Version, error, 'resource{url, description, mimeType}', 'accepts[]{scheme, network, amount, asset, payTo, maxTimeoutSeconds, extra{name, version}}', 'extensions.bazaar{info{input, output}, schema}']
+  sources: ['PAYMENT-REQUIRED header on any unpaid paid route']
+- name: Rail
+  fields: [network, asset, payTo, facilitator]
+  sources: ['/.well-known/x402 rails[]']
+  count: 1
+- name: RoutePlan
+  aliases: [finder match, A2A qorevia-route-plan artifact]
+  fields: [ok, query, category, 'matches[] | match {Tool fields, matchScore, matchedTokens}']
+  sources: ['GET /api/find', 'POST /api/route', 'MCP qorevia_find / qorevia_route', 'A2A message/send artifact']
+- name: ClubTier
+  identity: id (FOUNDING_AGENT | INSIDER_AGENT | QOREVIA_PRIME)
+  fields: [id, qualifier, 'benefits[]']
+  sources: ['GET /api/club', '/.well-known/qorevia-club.json']
+  count: 3
+- name: ReferralCode
+  identity: code (QF-XXXXXXXXXX), deterministic per wallet
+  fields: [code, wallet, share links]
+  sources: ['POST /api/club/referral/create', 'GET /api/club/referral/{code}']
+- name: LoungeEntry
+  fields: [room, 'entries[]', count, privacy]
+  sources: ['GET /api/club/lounge', 'POST /api/club/lounge/check-in']
+- name: Health
+  fields: [ok, service, mode, network, publicOrigin, payTo, facilitator, 'mt5{ok, connected, terminal, tradeAllowed, mode}', time]
+  sources: ['GET /health']
+relationships:
+- {from: Tool, to: PaymentRequirement, kind: has_one, via: 'resource.url == Tool.url; accepts[0].amount == priceUsd in USDC base units'}
+- {from: Tool, to: Rail, kind: belongs_to, via: 'network == rail.network; the 402 accepts[].payTo == rail.payTo'}
+- {from: RoutePlan, to: Tool, kind: has_many, via: 'matches[].key / match.key'}
+- {from: ReferralCode, to: ClubTier, kind: belongs_to, via: 'wallet payment history and referred payers qualify the tier'}
+- {from: Tool, to: Health, kind: depends_on, via: 'xau_quote, xau_bars, xau_market_state require mt5.connected (else 503, no charge)'}
+id_prefixes:
+- {prefix: QF-, entity: ReferralCode, source: 'club manifest: "Append ?ref=QF-XXXXXXXXXX to a Qorevia paid tool or use X-Qorevia-Ref"'}
+render: null

@@ -1,0 +1,43 @@
+generated: '2026-09-19'
+method: searched
+source: https://api.flowhomes.eu/skill.md
+scheme: >-
+  No dated changelog is published. Version numbers are stamped into the served documents (agent card,
+  beacons and /api/try report 3.7.2; the club manifest 3.6.0; MCP serverInfo 3.5.0; OpenAPI 2.0.0) and
+  skill.md carries HTML-comment build markers for releases 3.5, 3.6 and 3.7. The only externally dated
+  event is the Official MCP Registry publication of 3.7.2.
+current_version: '3.7.2 (gateway/agent card); 2.0.0 (OpenAPI info.version)'
+feeds: []
+note: >-
+  Entries below are reconstructed from the version markers in skill.md and the version fields in the
+  live documents, not from a provider changelog; only the 3.7.2 date is provider-stated (registry
+  publishedAt). Nothing indicates a breaking change to the 13 paid routes across these releases.
+entries:
+- version: 3.7.2
+  date: '2026-09-19'
+  source: https://registry.modelcontextprotocol.io/v0/servers?search=qorevia
+  breaking: false
+  additions:
+  - Official MCP Registry listing eu.flowhomes.api/qorevia-market-intelligence (remotes streamable-http https://api.flowhomes.eu/mcp)
+  - '/.well-known/mcp-registry-auth ownership proof'
+- version: '3.7'
+  date: null
+  source: https://api.flowhomes.eu/skill.md (marker QOREVIA_V3_7_SKILL_MAGNET)
+  breaking: false
+  additions:
+  - Agent Magnet beacon /.well-known/qorevia-magnet.json and /api/magnet, /api/magnet/stats (registry-presence scanner)
+  - Standard A2A card at /.well-known/agent-card.json with the legacy /.well-known/agent.json alias
+  - Distribution beacon /.well-known/qorevia-distribution.json and router feed /.well-known/qorevia-router.json; /api/try free preview
+- version: '3.6'
+  date: null
+  source: https://api.flowhomes.eu/skill.md (marker QOREVIA_V3_6_SKILL_GROWTH)
+  breaking: false
+  additions:
+  - Founders Network (/api/club, tiers, referrals, lounge) and the machine invite beacon /.well-known/qorevia-club.json
+  - Qorevia Afterhours page /party
+- version: '3.5'
+  date: null
+  source: https://api.flowhomes.eu/skill.md (marker QOREVIA_V3_5_SKILL_GATEWAY)
+  breaking: false
+  additions:
+  - Universal gateway — free finder /api/find, router /api/route, catalog /api/catalog, MCP server at /mcp (serverInfo 3.5.0) and A2A endpoint at /a2a

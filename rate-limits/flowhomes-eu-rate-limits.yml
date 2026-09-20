@@ -1,0 +1,18 @@
+generated: '2026-09-19'
+method: searched
+source: https://api.flowhomes.eu/skill.md
+limit_count: 0
+note: >-
+  No rate limits are published. Searched 2026-09-19: skill.md, llms.txt, the landing page, the x402
+  manifest, the router/distribution/magnet beacons and the OpenAPI (no 429 declared on any of 34
+  paths). Live 200 responses (GET /api/catalog), 402 responses (GET /api/session-state, POST
+  /api/csv-profile) and 404s carried no RateLimit-*, X-RateLimit-* or Retry-After header. The only
+  limit-shaped values are request-shape bounds, not quotas: GET /api/find limit 1-20, GET /api/catalog
+  limit 1-100 (MCP qorevia_catalog), xau_bars count 10-500, json_shape maxDepth 1-12 and maxPaths
+  10-1000, and csv_profile's "Request body is bounded by the service HTTP limit" (value unstated). Paid
+  routes are metered by payment rather than by quota: each call costs its listed USDC price and the 402
+  requirement's maxTimeoutSeconds is 300.
+headers:
+  observed: []
+  exhaustion_status: null
+limits: []

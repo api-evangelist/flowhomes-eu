@@ -1,0 +1,36 @@
+generated: '2026-09-19'
+method: searched
+source: https://api.flowhomes.eu/skill.md
+versioning:
+  scheme: >-
+    No versioning policy is published. Three independent version numbers are visible: the OpenAPI
+    info.version 2.0.0; the gateway/agent-card/beacon/registry version 3.7.2 (skill.md carries build
+    markers QOREVIA_V3_5_SKILL_GATEWAY, V3_6_SKILL_GROWTH, V3_7_SKILL_MAGNET); and the MCP serverInfo
+    version 3.5.0. Paths are unversioned (/api/...), and no version header or parameter exists.
+  current_version: '2.0.0 (OpenAPI info.version); 3.7.2 (gateway, agent card, MCP Registry); 3.5.0 (MCP serverInfo)'
+  path_versioning: none
+  header_versioning: none
+deprecation:
+  policy: none published
+  sunset_header: not observed
+  deprecation_header: not observed
+  deprecated_operations: []
+  note: >-
+    No operation in openapi/flowhomes-eu-openapi.json carries deprecated true, and no page documents a
+    deprecation or sunset process. The distribution beacon's safety block (noAutomaticPriceChanges true)
+    is the only stated stability commitment, and it concerns prices, not the contract.
+status_page:
+  url: null
+  health_endpoint: https://api.flowhomes.eu/health
+  note: >-
+    No status page. GET /health (200, anonymous) reports service, mode x402, network, payTo, facilitator
+    and the MetaTrader 5 terminal state {ok, connected, terminal "Eightcap Global MT5 Terminal",
+    tradeAllowed false, mode READ_ONLY} — a live health probe an agent can read before paying for an
+    MT5 route, not an incident history. /status is a 404. No StatusPage pointer is emitted.
+sla:
+  published: false
+  note: No uptime, latency or support SLA is published; there is no terms page and no contact address on any served surface.
+support_lifetime:
+  stated_period: null
+  note: Nothing is stated about how long the API or any version will be supported.
+changelog: changelog/flowhomes-eu-changelog.yml

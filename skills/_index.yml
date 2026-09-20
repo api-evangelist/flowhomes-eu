@@ -1,0 +1,31 @@
+generated: '2026-09-19'
+method: searched
+source: >-
+  https://api.flowhomes.eu/skill.md — the provider's own agent skill document, saved verbatim as
+  flowhomes-eu-skill.md (method searched) — plus two skills generated from openapi/flowhomes-eu-openapi.json,
+  where every operationId, parameter, enum and bound was verified in the spec, and from the live 402 and
+  /health responses observed 2026-09-19.
+skills:
+- file: flowhomes-eu-skill.md
+  name: Qorevia Market Intelligence (provider skill.md)
+  method: searched
+  authored_by: provider
+  url: https://api.flowhomes.eu/skill.md
+  description: The provider's agent-facing document — base URL, discovery links (x402 manifest, OpenAPI, finder, MCP, A2A card, club, magnet), the 13 paid tools with prices, payment network and asset, and the one-sentence 402 -> pay -> retry rule.
+  operations: 13
+  operation_ids: [session_state, risk_levels, strategy_grade, xau_quote, xau_bars, xau_market_state, csv_profile, json_shape, jwt_decode, tick_pnl, evm_address_syntax, ohlcv_state, regex_test]
+  note: Served body carries HTML-comment build markers (V3_5/V3_6/V3_7) and mojibake em dashes; saved byte-for-byte.
+- file: flowhomes-eu-discover-then-pay.md
+  name: flowhomes-eu-discover-then-pay
+  method: generated
+  description: Find the right tool without spending, read price and schema from the free 402 preflight, pay exactly once via x402 and retry — with the money-safety rules the docs do and do not state.
+  operations: 10
+  operation_ids: [csv_profile, json_shape, jwt_decode, regex_test, evm_address_syntax, tick_pnl, ohlcv_state, risk_levels, strategy_grade, session_state]
+  routes: ['GET /api/find', 'POST /api/route', 'GET /api/catalog', 'GET /health']
+- file: flowhomes-eu-xauusd-snapshot.md
+  name: flowhomes-eu-xauusd-snapshot
+  method: generated
+  description: Live gold snapshot — quote, OHLCV bars, computed market state — from the read-only MT5 feed, gated on /health so no payment is made for a route that would 503.
+  operations: 4
+  operation_ids: [xau_quote, xau_bars, xau_market_state, session_state]
+  routes: ['GET /health']

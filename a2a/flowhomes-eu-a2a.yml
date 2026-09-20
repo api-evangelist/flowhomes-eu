@@ -1,0 +1,164 @@
+generated: '2026-09-19'
+method: probed
+source: https://api.flowhomes.eu/.well-known/agent-card.json
+card:
+  file: a2a/flowhomes-eu-agent-card.json
+discovery:
+  path: /.well-known/agent-card.json
+  canonical: true
+  host: api.flowhomes.eu
+  note: >-
+    Served from api.flowhomes.eu, which is also the OpenAPI servers[] host, the MCP host
+    (https://api.flowhomes.eu/mcp) and the A2A JSON-RPC host (https://api.flowhomes.eu/a2a) — Qorevia
+    runs everything on one Caddy-fronted Node/Express origin. The registrable domain flowhomes.eu
+    serves nothing (TLS handshake failure on 443; HTTP 409 "error code: 1001" from Cloudflare), so the
+    API host is the only host and the card is on the right one. The host has no catch-all: a
+    negative-control path under /.well-known/ returned a real Express 404 ("Cannot GET ..."), as did
+    security.txt and every OAuth/OIDC discovery path. The legacy /.well-known/agent.json ALSO answers
+    200 and is byte-identical to the canonical card (cmp), so it is an alias, not a second document.
+    Ownership: the card's provider.organization is "Qorevia" with provider.url https://api.flowhomes.eu;
+    the OpenAPI on the same host titles itself "Qorevia Market Intelligence"; the x402 manifest,
+    router/magnet/distribution beacons, skill.md, llms.txt and sitemap all cross-reference this exact
+    card URL; the Official MCP Registry entry eu.flowhomes.api/qorevia-market-intelligence names the
+    same websiteUrl. The lead came from a2aregistry.org (415 agents fetched 2026-09-19, author
+    "Qorevia"); the card was fetched directly from the provider's host.
+x-evidence:
+  fetched: '2026-09-19'
+  url: https://api.flowhomes.eu/.well-known/agent-card.json
+  http_status: 200
+  content_type: application/json; charset=utf-8
+  body_bytes: 5238
+  etag: W/"1476-Um6yEVghuH+fRdVcfjDcH0Kdpi8"
+  body_parses_as: >-
+    JSON object with A2A 1.0 AgentCard shape (name, description, supportedInterfaces[], version,
+    provider, documentationUrl, capabilities, defaultInputModes, defaultOutputModes, skills[10]) plus
+    four vendor extension objects (qoreviaClub, qoreviaMagnet, qoreviaDistribution, qoreviaRouter).
+  corroborating_probes:
+  - url: https://api.flowhomes.eu/.well-known/agent.json
+    http_status: 200
+    content_type: application/json; charset=utf-8
+    note: Legacy path; body byte-identical to the canonical card.
+  - url: https://api.flowhomes.eu/a2a
+    method: GET
+    http_status: 404
+    note: The JSON-RPC endpoint is POST-only; a GET returns the Express HTML 404.
+  - url: https://api.flowhomes.eu/a2a
+    method: POST
+    body: '{"jsonrpc":"2.0","id":1,"method":"agent/getAuthenticatedExtendedCard"}'
+    http_status: 200
+    response: '{"jsonrpc":"2.0","id":1,"error":{"code":-32601,"message":"Method not found"}}'
+  - url: https://api.flowhomes.eu/a2a
+    method: POST
+    body: '{"jsonrpc":"2.0","id":2,"method":"tasks/get","params":{"id":"probe-nonexistent"}}'
+    http_status: 200
+    response: '{"jsonrpc":"2.0","id":2,"error":{"code":-32001,"message":"Task not found"}}'
+    note: A2A-specific error code for an unknown task id — tasks/get is implemented.
+  - url: https://api.flowhomes.eu/a2a
+    method: POST
+    body: '{"jsonrpc":"2.0","id":6,"method":"message/send","params":{"message":{"role":"user","messageId":"ae-probe-1","parts":[{"kind":"text","text":"Find a tool to profile CSV data"}]}}}'
+    http_status: 200
+    response_summary: >-
+      result.status.state "completed" (timestamp 2026-09-20T00:31:26Z), result.id and contextId UUIDs,
+      one artifact named "qorevia-route-plan" whose data part carried match.key csv-profile, method
+      POST, path /api/csv-profile, priceUsd 0.0025, network eip155:8453, the tool's inputSchema,
+      exampleInput and outputExample, matchScore 118.
+    note: The card's example prompt for the qorevia-find-tool skill, sent once. Discovery is free; nothing was purchased.
+  - url: https://api.flowhomes.eu/.well-known/apievangelist-negative-control-7f3a9c.json
+    http_status: 404
+    note: Negative control — Express "Cannot GET" HTML, 193 bytes. No path echo, no catch-all.
+agent_card:
+  name: Qorevia Universal Agent Gateway
+  description: >-
+    Discovery and routing gateway for 13 x402-payable Qorevia tools. The gateway finder is free; paid
+    tools settle individually via x402. Qorevia provides machine-discoverable market intelligence,
+    XAUUSD and financial-analysis tools, x402 paid APIs, MCP/A2A routing and the Founders Network.
+  version: 3.7.2
+  supported_interfaces:
+  - {url: 'https://api.flowhomes.eu/a2a', protocol_binding: JSONRPC, protocol_version: '1.0'}
+  provider:
+    organization: Qorevia
+    url: https://api.flowhomes.eu
+  documentation_url: https://api.flowhomes.eu/skill.md
+  capabilities:
+    streaming: false
+    push_notifications: false
+  default_input_modes: [text/plain, application/json]
+  default_output_modes: [application/json, text/plain]
+  security_schemes: null
+  security: null
+  skill_count: 10
+  skills:
+  - {id: qorevia-find-tool, name: Find Qorevia tool, tags: [tool-discovery, routing, x402, agents], examples: ['Find a tool to profile CSV data', 'I need a tick PnL calculator', 'Find a JSON structure analyzer']}
+  - {id: qorevia-catalog, name: Browse Qorevia catalog, tags: [catalog, x402, tools]}
+  - {id: qorevia-market-intelligence, name: Market intelligence and XAUUSD data, tags: [market-data, xauusd, gold, finance, quant, x402]}
+  - {id: qorevia-mcp-router, name: MCP tool router, tags: [mcp, tool-discovery, routing, x402]}
+  - {id: qorevia-founders-network, name: Qorevia Founders Network, tags: [agent-network, buyers, x402, referrals]}
+  - {id: qorevia-xauusd-quote, name: Live XAUUSD quote and spread, tags: [xauusd, gold, quote, bid, ask, spread, market-data, x402]}
+  - {id: qorevia-xauusd-bars, name: XAUUSD OHLCV bars, tags: [xauusd, gold, ohlcv, bars, quant, research, market-data]}
+  - {id: qorevia-market-state, name: XAUUSD market state and volatility, tags: [xauusd, atr, volatility, market-state, regime, quant]}
+  - {id: qorevia-free-router, name: Free capability finder and router feed, tags: [discovery, router, catalog, agent-tools, mcp, a2a, free]}
+  - {id: qorevia-x402-seller, name: x402 pay-per-call agent tools, tags: [x402, usdc, base, pay-per-call, agent-commerce]}
+  skill_invocation: >-
+    message/send with a text/plain part describing the need; the agent completes synchronously and
+    returns an application/json "qorevia-route-plan" artifact (the matching REST route, price, network,
+    inputSchema and examples). The A2A skill routes; it does not execute the paid tool. Only the first
+    skill (qorevia-find-tool) carries examples; the other nine describe the catalog rather than distinct
+    invocable behaviours and resolve through the same finder.
+  vendor_extensions: [qoreviaClub, qoreviaMagnet, qoreviaDistribution, qoreviaRouter]
+conformance:
+  spec: A2A 1.0.0
+  grade: conformant
+  protocol_version: '1.0'
+  preferred_transport: null
+  protocol_binding: JSONRPC
+  hard_checks:
+    capabilities_is_object: true
+    protocol_version_present: true
+    skills_is_array: true
+  optional_fields:
+    default_input_modes: true
+    default_output_modes: true
+    preferred_transport: false
+  grade_basis: >-
+    Graded against the A2A 1.0.0 hard checks. capabilities is an OBJECT (pass) with streaming and
+    pushNotifications both false. protocolVersion is present (pass) at its A2A 1.0.0 location —
+    supportedInterfaces[0].protocolVersion "1.0" alongside protocolBinding "JSONRPC" and the endpoint
+    url; A2A 1.0 moved the top-level url/protocolVersion/preferredTransport/additionalInterfaces
+    quartet into supportedInterfaces[], so a card that carries them there and not at the top level is
+    the 1.0 shape, not a missing field. skills is an ARRAY (pass) of ten entries each with id, name,
+    description and tags. defaultInputModes and defaultOutputModes are present; preferredTransport is
+    absent because 1.0 replaced it with protocolBinding, which is present. The endpoint the card
+    declares is live and speaks A2A (message/send completed a task; tasks/get returns the A2A -32001
+    TaskNotFound code), so the card describes a real agent, not a stub.
+  deviations:
+  - field: protocolVersion / url / preferredTransport (top level)
+    observed: absent; carried in supportedInterfaces[] {url, protocolBinding, protocolVersion "1.0"}
+    note: >-
+      Correct for A2A 1.0.0. A reader written against 0.3.0 that looks for a top-level protocolVersion
+      and preferredTransport will grade this card flavored; recorded because both shapes coexist in the
+      catalog, not as a fault.
+  - field: skills[].examples
+    observed: present on 1 of 10 skills
+    note: Nine skills have no examples; several (market-intelligence, xauusd-quote, xauusd-bars, market-state, x402-seller) describe paid REST routes the A2A agent only routes to.
+  - field: securitySchemes / security
+    observed: absent
+    note: >-
+      Accurate for the discovery skill, which is free, but the card carries no machine-readable statement
+      that everything it routes to is x402-paid; an agent learns the payment model from the description,
+      skill.md, the x402 manifest and the 402 envelope, not from the card.
+  - field: capabilities.extensions
+    observed: absent
+    note: No a2a-x402 or other payment extension is declared; payment happens on the REST routes, outside the A2A exchange.
+  - field: iconUrl / signatures
+    observed: absent
+    note: No icon and no JWS signature block; authenticity rests on TLS to api.flowhomes.eu.
+  - field: vendor keys
+    observed: qoreviaClub, qoreviaMagnet, qoreviaDistribution, qoreviaRouter
+    note: Four non-standard top-level objects (a fifth of the document by bytes) carrying the provider's own discovery/marketing links. Harmless to a conformant reader; not part of AgentCard.
+surface_relationship:
+  note: >-
+    Qorevia publishes four agent-facing projections of ONE 13-tool catalog on one host. REST: 13 x402-paid
+    operations in an OpenAPI 3.1.0 at /openapi.json. MCP: four FREE discovery tools at /mcp that return
+    route plans into that catalog (no tool executes a paid route). A2A: ten declared skills that all
+    resolve to the same free finder and return the same route plan. Plus an x402 v2 manifest at
+    /.well-known/x402 listing the same 13 resources with prices. See mcp/flowhomes-eu-tool-crosswalk.yml.

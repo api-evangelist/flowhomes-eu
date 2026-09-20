@@ -1,0 +1,95 @@
+generated: '2026-09-19'
+method: derived
+source: >-
+  mcp/flowhomes-eu-mcp-tools.json (live tools/list, 4 tools), a2a/flowhomes-eu-agent-card.json (10
+  skills, one live message/send), openapi/flowhomes-eu-openapi.json (34 paths, 13 with operationIds)
+  and the free JSON surfaces /api/find, /api/route, /api/catalog probed 2026-09-19. Bound by comparing
+  the MCP tool's inputSchema with the REST route's parameters and by observing identical response bodies
+  (the qorevia_find tools/call, the A2A route plan and GET /api/find?q=profile+csv all returned the same
+  csv-profile match object).
+surfaces:
+  openapi: {path: openapi/flowhomes-eu-openapi.json, host: api.flowhomes.eu, operations: 34, with_operation_ids: 13, gated: 'the 13 priced operations return 402 until paid (x402); the other 21 are free'}
+  mcp: {url: 'https://api.flowhomes.eu/mcp', tools: 4, gated: false, note: anonymous initialize/tools/list/tools/call}
+  a2a: {url: 'https://api.flowhomes.eu/a2a', skills: 10, gated: false, note: 'message/send completed a task anonymously'}
+  graphql: null
+crosswalk:
+- tool: qorevia_find
+  category: discovery
+  rest: ['GET /api/find']
+  binding: 'query -> q, limit -> limit (1-20 on both); response is the same {ok, query, category, matches[]} object'
+  confidence: high
+  note: The spec declares no operationId on /api/find; bound by route. Verified live — identical csv-profile match from both surfaces.
+- tool: qorevia_route
+  category: discovery
+  rest: ['POST /api/route']
+  binding: 'query -> q (body), input -> input (body); returns a call plan or {ok:false, reason: NO_MATCH}'
+  confidence: high
+  note: No operationId on /api/route. A POST with {"q":"decode a jwt"} returned NO_MATCH with a suggestion to use /api/catalog — the router keys on a `query` field; REST body field naming was not confirmed from docs.
+- tool: qorevia_catalog
+  category: catalog
+  rest: ['GET /api/catalog']
+  binding: 'q, category, offset, limit -> same query parameters; response {ok, total 13, offset, limit 50, items[]}'
+  confidence: high
+- tool: qorevia_tool_info
+  category: catalog
+  rest: ['GET /api/catalog']
+  binding: 'pathOrKey -> a single items[] entry selected by key (e.g. csv-profile) or path (/api/csv-profile)'
+  confidence: medium
+  note: No single-item REST route exists in the spec; the tool is a server-side filter over the catalog.
+a2a_skills:
+- {skill: qorevia-find-tool, rest: ['GET /api/find'], mcp: qorevia_find, confidence: high, note: 'message/send returned the qorevia-route-plan artifact with the /api/find match object'}
+- {skill: qorevia-catalog, rest: ['GET /api/catalog'], mcp: qorevia_catalog, confidence: high}
+- {skill: qorevia-mcp-router, rest: ['POST /api/route'], mcp: qorevia_route, confidence: medium}
+- {skill: qorevia-free-router, rest: ['GET /api/try', 'GET /.well-known/qorevia-router.json'], mcp: null, confidence: medium}
+- {skill: qorevia-founders-network, rest: ['GET /api/club', 'GET /api/club/status', 'POST /api/club/referral/create', 'GET /api/club/referral/{code}', 'GET /api/club/lounge', 'POST /api/club/lounge/check-in'], mcp: null, confidence: medium, note: 'Descriptive skill; the club routes are free REST'}
+- {skill: qorevia-market-intelligence, rest: [xau_quote, xau_bars, xau_market_state, session_state, risk_levels, strategy_grade], mcp: null, confidence: low, note: 'Descriptive — the A2A agent routes to these paid operations, it does not execute them'}
+- {skill: qorevia-xauusd-quote, rest: [xau_quote], mcp: null, confidence: low, note: descriptive; execution is x402-paid REST}
+- {skill: qorevia-xauusd-bars, rest: [xau_bars], mcp: null, confidence: low, note: descriptive; execution is x402-paid REST}
+- {skill: qorevia-market-state, rest: [xau_market_state], mcp: null, confidence: low, note: descriptive; execution is x402-paid REST}
+- {skill: qorevia-x402-seller, rest: [session_state, risk_levels, strategy_grade, xau_quote, xau_bars, xau_market_state, csv_profile, json_shape, jwt_decode, tick_pnl, evm_address_syntax, ohlcv_state, regex_test], mcp: null, confidence: low, note: descriptive umbrella for all 13 paid routes}
+mcp_only: []
+rest_only:
+- {operationId: session_state, route: 'GET /api/session-state', price_usd: 0.005, reason: paid route; MCP returns a plan for it, never calls it}
+- {operationId: risk_levels, route: 'POST /api/risk-levels', price_usd: 0.005, reason: paid route}
+- {operationId: strategy_grade, route: 'POST /api/strategy-grade', price_usd: 0.02, reason: paid route}
+- {operationId: xau_quote, route: 'GET /api/xau/quote', price_usd: 0.01, reason: paid route}
+- {operationId: xau_bars, route: 'GET /api/xau/bars', price_usd: 0.02, reason: paid route}
+- {operationId: xau_market_state, route: 'GET /api/xau/market-state', price_usd: 0.03, reason: paid route}
+- {operationId: csv_profile, route: 'POST /api/csv-profile', price_usd: 0.0025, reason: paid route}
+- {operationId: json_shape, route: 'POST /api/json-shape', price_usd: 0.0025, reason: paid route}
+- {operationId: jwt_decode, route: 'POST /api/jwt-decode', price_usd: 0.0025, reason: paid route}
+- {operationId: tick_pnl, route: 'POST /api/tick-pnl', price_usd: 0.05, reason: paid route}
+- {operationId: evm_address_syntax, route: 'POST /api/evm-address-syntax', price_usd: 0.01, reason: paid route}
+- {operationId: ohlcv_state, route: 'POST /api/ohlcv-state', price_usd: 0.0025, reason: paid route}
+- {operationId: regex_test, route: 'POST /api/regex-test', price_usd: 0.0034, reason: paid route}
+- {route: 'GET /api/try', reason: free preview; no tool}
+- {route: 'GET /.well-known/qorevia-router.json', reason: beacon; no tool}
+- {route: 'GET /.well-known/qorevia-distribution.json', reason: beacon; no tool}
+- {route: 'GET /.well-known/qorevia-magnet.json', reason: beacon; no tool}
+- {route: 'GET /.well-known/qorevia-club.json', reason: beacon; no tool}
+- {route: 'GET /.well-known/agent.json', reason: legacy agent-card alias; no tool}
+- {route: 'GET /api/amplifier/stats', reason: telemetry; no tool}
+- {route: 'GET /api/distribution/stats', reason: telemetry; no tool}
+- {route: 'GET /api/magnet', reason: beacon; no tool}
+- {route: 'GET /api/magnet/stats', reason: telemetry; no tool}
+- {route: 'GET /api/club', reason: Founders Network; no tool}
+- {route: 'GET /api/club/status', reason: Founders Network; no tool}
+- {route: 'POST /api/club/referral/create', reason: Founders Network write; no tool}
+- {route: 'GET /api/club/referral/{code}', reason: Founders Network; no tool}
+- {route: 'GET /api/club/lounge', reason: Founders Network; no tool}
+- {route: 'POST /api/club/lounge/check-in', reason: Founders Network write; no tool}
+- {route: 'POST /mcp', reason: the MCP endpoint itself}
+- {route: 'POST /a2a', reason: the A2A endpoint itself}
+coverage:
+  mcp_tools: 4
+  mcp_tools_bound_to_rest: 4
+  a2a_skills: 10
+  rest_operations: 34
+  rest_operations_with_tool: 3
+  rest_only: 31
+  paid_operations: 13
+  paid_operations_callable_over_mcp_or_a2a: 0
+  note: >-
+    Coverage is deliberately narrow on the provider's side: MCP and A2A are free front doors that hand an
+    agent the REST route, price and schema; the paid work is REST-only by design ("Discover first, then
+    call only the selected x402-paid tool" — qorevia-router.json).

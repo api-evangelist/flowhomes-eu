@@ -1,0 +1,72 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enhancements for the Qorevia Market Intelligence OpenAPI
+  version: 1.0.0
+  x-generated: '2026-09-19'
+  x-method: generated
+  x-source: openapi/flowhomes-eu-openapi.json
+  x-description: >-
+    Non-destructive overlay over the provider's OpenAPI 3.1.0 (2.0.0). Adds operationIds to the 21
+    discovery/router/club paths the provider left unnamed (derived from method + path), tags them so
+    the free surface is distinguishable from the 13 paid operations, and records the observed x402 gate
+    as a documented (non-standard) security note in info.description. The original file is untouched.
+extends: ./openapi/flowhomes-eu-openapi.json
+actions:
+- target: $.info
+  update:
+    contact: {url: 'https://api.flowhomes.eu/skill.md'}
+    x-apievangelist-note: >-
+      No securitySchemes are declared and none apply: the 13 operations carrying x-payment-info return
+      HTTP 402 with a PAYMENT-REQUIRED header (x402 v2, USDC on Base) until the request is retried with
+      PAYMENT-SIGNATURE; every other path is free. See conventions/flowhomes-eu-conventions.yml.
+- target: $.tags
+  update:
+  - {name: finance, description: Paid market, risk and trading tools (x402)}
+  - {name: data, description: Paid local data-profiling tools (x402)}
+  - {name: developer-tools, description: Paid developer utilities (x402)}
+  - {name: discovery, description: Free finder, router, catalog and preview routes}
+  - {name: beacon, description: Free machine-readable vendor discovery documents}
+  - {name: founders-network, description: Free Founders Network (club) routes}
+  - {name: agent-protocols, description: MCP and A2A JSON-RPC endpoints}
+- target: $.paths['/api/find'].get
+  update: {operationId: find_tool, tags: [discovery]}
+- target: $.paths['/api/route'].post
+  update: {operationId: route_tool, tags: [discovery]}
+- target: $.paths['/api/catalog'].get
+  update: {operationId: list_catalog, tags: [discovery]}
+- target: $.paths['/api/try'].get
+  update: {operationId: try_preview, tags: [discovery]}
+- target: $.paths['/mcp'].post
+  update: {operationId: mcp_jsonrpc, tags: [agent-protocols]}
+- target: $.paths['/a2a'].post
+  update: {operationId: a2a_jsonrpc, tags: [agent-protocols]}
+- target: $.paths['/.well-known/qorevia-router.json'].get
+  update: {operationId: get_router_beacon, tags: [beacon]}
+- target: $.paths['/.well-known/qorevia-distribution.json'].get
+  update: {operationId: get_distribution_beacon, tags: [beacon]}
+- target: $.paths['/.well-known/qorevia-magnet.json'].get
+  update: {operationId: get_magnet_beacon, tags: [beacon]}
+- target: $.paths['/.well-known/qorevia-club.json'].get
+  update: {operationId: get_club_beacon, tags: [beacon]}
+- target: $.paths['/.well-known/agent.json'].get
+  update: {operationId: get_legacy_agent_card, tags: [beacon]}
+- target: $.paths['/api/amplifier/stats'].get
+  update: {operationId: get_amplifier_stats, tags: [beacon]}
+- target: $.paths['/api/distribution/stats'].get
+  update: {operationId: get_distribution_stats, tags: [beacon]}
+- target: $.paths['/api/magnet'].get
+  update: {operationId: get_magnet, tags: [beacon]}
+- target: $.paths['/api/magnet/stats'].get
+  update: {operationId: get_magnet_stats, tags: [beacon]}
+- target: $.paths['/api/club'].get
+  update: {operationId: get_club, tags: [founders-network]}
+- target: $.paths['/api/club/status'].get
+  update: {operationId: get_club_status, tags: [founders-network]}
+- target: $.paths['/api/club/referral/create'].post
+  update: {operationId: create_referral_code, tags: [founders-network]}
+- target: $.paths['/api/club/referral/{code}'].get
+  update: {operationId: get_referral_status, tags: [founders-network]}
+- target: $.paths['/api/club/lounge'].get
+  update: {operationId: get_lounge, tags: [founders-network]}
+- target: $.paths['/api/club/lounge/check-in'].post
+  update: {operationId: lounge_check_in, tags: [founders-network]}

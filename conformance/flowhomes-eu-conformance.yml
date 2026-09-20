@@ -1,0 +1,92 @@
+generated: '2026-09-19'
+method: probed
+source: >-
+  Live probes of api.flowhomes.eu (well-known/flowhomes-eu-well-known.yml, mcp/flowhomes-eu-mcp.yml,
+  a2a/flowhomes-eu-a2a.yml) and a read of openapi/flowhomes-eu-openapi.json (OpenAPI 3.1.0, Qorevia
+  Market Intelligence 2.0.0), 2026-09-19. Content decided every verdict, never a status code alone.
+standards:
+- id: x402-v2
+  conforms: true
+  evidence: >-
+    GET https://api.flowhomes.eu/api/session-state with no payment -> HTTP 402, cache-control no-store,
+    body {} and a PAYMENT-REQUIRED header whose base64 payload decodes to {x402Version: 2, error:
+    "Payment required", resource {url, description, mimeType}, accepts[{scheme exact, network
+    eip155:8453, amount "5000", asset 0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913 (USDC on Base), payTo
+    0x80cdA9077d65Ac1a05454619Bb94B318cf0c3382, maxTimeoutSeconds 300, extra {name "USD Coin", version
+    "2"}}], extensions {bazaar {info {input, output}, schema}}}. A v2 service manifest is served at
+    /.well-known/x402 (x402Version 2, rails[], resources[13], freeResources[24]) naming the facilitator
+    https://facilitator.payai.network. The OpenAPI carries x-payment-info {price, currency USDC,
+    network, protocol x402} on all 13 paid operations and skill.md documents the retry with
+    PAYMENT-SIGNATURE. A live, complete x402 v2 seller.
+- id: mcp-2025-06-18
+  conforms: true
+  evidence: >-
+    POST https://api.flowhomes.eu/mcp initialize -> {protocolVersion "2025-06-18", capabilities {tools
+    {}}, serverInfo {qorevia-universal-gateway 3.5.0}, instructions}; tools/list -> 4 tools with JSON
+    Schema inputSchema; tools/call qorevia_find -> content[{type text}]; resources/list and
+    prompts/list -> JSON-RPC -32601. Streamable HTTP, POST-only (GET 404). Listed in the Official MCP
+    Registry with a served /.well-known/mcp-registry-auth ownership proof.
+- id: a2a-1.0
+  conforms: true
+  evidence: >-
+    /.well-known/agent-card.json is a 1.0-shaped AgentCard (supportedInterfaces[{url, protocolBinding
+    JSONRPC, protocolVersion "1.0"}], capabilities object, skills[10], provider, defaultInput/OutputModes)
+    graded conformant in a2a/flowhomes-eu-a2a.yml; the declared endpoint answered message/send with a
+    completed Task carrying an artifact, and tasks/get with the A2A -32001 TaskNotFound code.
+- id: json-rpc-2.0
+  conforms: true
+  evidence: Both /mcp and /a2a return well-formed JSON-RPC 2.0 envelopes, including -32601 Method not found for unknown methods and matching ids.
+- id: openapi-3.1
+  conforms: true
+  evidence: >-
+    https://api.flowhomes.eu/openapi.json declares openapi 3.1.0 with info, servers[] and 34 paths;
+    13 operations carry operationId, tags, parameters/requestBody schemas and response examples. 21
+    discovery/club paths carry only a summary and a 200 description (no operationId, no schemas);
+    components is empty and no securitySchemes are declared (accurate — there is no API key).
+- id: rfc9457-problem-details
+  conforms: false
+  evidence: >-
+    No application/problem+json anywhere. The 402 body is {}; router errors are {ok:false, reason:
+    NO_MATCH, suggestion}; club errors are {ok:false, error: invalid_wallet}; unknown paths return
+    Express HTML. See errors/flowhomes-eu-problem-types.yml.
+- id: oauth2
+  conforms: false
+  evidence: No OAuth 2.0 flow, no securitySchemes, and /.well-known/oauth-authorization-server is a 404. Access is unauthenticated; payment (x402) is the only gate.
+- id: openid-connect-discovery
+  conforms: false
+  evidence: https://api.flowhomes.eu/.well-known/openid-configuration -> 404.
+- id: rfc8414-oauth-authorization-server-metadata
+  conforms: false
+  evidence: https://api.flowhomes.eu/.well-known/oauth-authorization-server -> 404.
+- id: rfc9728-oauth-protected-resource
+  conforms: false
+  evidence: https://api.flowhomes.eu/.well-known/oauth-protected-resource -> 404 on the MCP host. Consistent with an MCP server that requires no authorization; not a broken pointer.
+- id: rfc9116-security-txt
+  conforms: false
+  evidence: https://api.flowhomes.eu/.well-known/security.txt -> 404; the apex is unreachable.
+- id: rfc9727-api-catalog
+  conforms: false
+  evidence: /.well-known/api-catalog and /.well-known/api-catalog.json -> 404.
+- id: apis-json
+  conforms: false
+  evidence: /apis.json, /apis.yml and /.well-known/apis.json -> 404.
+- id: llms-txt
+  conforms: true
+  evidence: https://api.flowhomes.eu/llms.txt -> 200 text/plain, a markdown llms.txt with title, summary, base URL, discovery links and the tool list (with a duplicated auto-products block). Saved verbatim.
+- id: pagination
+  conforms: partial
+  evidence: 'GET /api/catalog and the qorevia_catalog MCP tool take offset + limit (1-100) and return {total, offset, limit, items[]} — offset pagination on the one list surface; nothing else is a list.'
+- id: idempotency
+  conforms: false
+  evidence: No Idempotency-Key or equivalent on any operation and no replay guidance. The 13 paid routes are stateless computations; the two Founders Network writes (referral create, lounge check-in) document no key. See conventions/.
+- id: rate-limit-headers
+  conforms: false
+  evidence: No RateLimit-*, X-RateLimit-* or Retry-After header on any observed 200/402/404 response; no 429 declared in the spec. See rate-limits/.
+domain_standard:
+  market: retail FX / gold (XAUUSD) market data and quantitative research tools; developer utilities
+  declared: none
+  note: >-
+    Reward-only check. The contract declares no domain standard for its market — no FIX/FIXatdl message
+    types, no FDX or ISO 20022 shapes, no OHLC standard schema; bars are a vendor JSON object {time,
+    open, high, low, close, tick_volume} read from MetaTrader 5. x402, MCP and A2A are cross-cutting
+    protocols recorded above, not domain standards. Nothing is asserted here.

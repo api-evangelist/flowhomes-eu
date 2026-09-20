@@ -1,0 +1,189 @@
+generated: '2026-09-19'
+method: probed
+source: >-
+  Live GET probes of the named /.well-known/* and root discovery paths on api.flowhomes.eu (the only
+  live host — API baseURL, OpenAPI servers[] host, MCP host and A2A host in one), flowhomes.eu and
+  www.flowhomes.eu, 2026-09-19. Every row is a request that was actually issued and every status is
+  the one returned. Saved files are byte-for-byte copies of the served bodies.
+summary:
+  hosts_probed: 3
+  documents_served: 9
+  hit_count: 9
+  path_echo_control: passed
+  note: >-
+    api.flowhomes.eu serves a real A2A agent card (canonical path, and byte-identical at the legacy
+    /.well-known/agent.json), an x402 v2 service manifest at /.well-known/x402, four vendor "beacon"
+    JSON documents (qorevia-router, -distribution, -magnet, -club), the Official MCP Registry ownership
+    proof (mcp-registry-auth) and a 402index verification token, plus /openapi.json, /llms.txt,
+    /skill.md, /robots.txt and /sitemap.xml at the root. It serves NO security.txt (RFC 9116), no
+    OpenID/OAuth discovery (RFC 8414 / OIDC), no RFC 9728 protected-resource metadata for its MCP
+    server (this host IS the MCP host, so these rows are the MCP-host rows), no RFC 9727 api-catalog,
+    no ai-plugin.json, no UCP/ACP/AAuth document and no APIs.json. Every miss is a real Express HTML
+    404 ("Cannot GET <path>", ~145-195 bytes) — a negative-control path returned the same, so no 200
+    below is a catch-all. The registrable domain flowhomes.eu resolves (A 216.24.57.1, a Render
+    address; NS internex.at; MX mail.flowhomes.eu) but serves nothing: the TLS handshake on 443 fails
+    with an alert (no certificate for this SNI) and plain HTTP returns 409 "error code: 1001" — a
+    Cloudflare DNS-resolution error page — so every path on the apex and www is recorded as
+    unreachable rather than 404.
+hosts:
+- host: api.flowhomes.eu
+  role: API host, OpenAPI servers[] host, MCP host (https://api.flowhomes.eu/mcp), A2A host (https://api.flowhomes.eu/a2a) and the provider's declared website. Node/Express behind Caddy.
+  documents:
+  - path: /.well-known/agent-card.json
+    status: 200
+    content_type: application/json; charset=utf-8
+    bytes: 5238
+    file: ../a2a/flowhomes-eu-agent-card.json
+    standard: A2A 1.0 AgentCard
+    agent_card_shape: true
+    note: Graded conformant in a2a/flowhomes-eu-a2a.yml.
+  - path: /.well-known/agent.json
+    status: 200
+    content_type: application/json; charset=utf-8
+    bytes: 5238
+    file: ../a2a/flowhomes-eu-agent-card.json
+    standard: A2A AgentCard (legacy path)
+    note: Byte-identical to the canonical card (cmp). Recorded as an alias; not a second document.
+  - path: /.well-known/x402
+    status: 200
+    content_type: application/json; charset=utf-8
+    bytes: 8070
+    file: flowhomes-eu-x402.json
+    standard: x402 v2 service manifest (x402Version 2)
+    note: >-
+      name, description, origin https://api.flowhomes.eu, rails[1] {network eip155:8453, asset USDC,
+      payTo 0x80cdA9077d65Ac1a05454619Bb94B318cf0c3382, facilitator https://facilitator.payai.network},
+      resources[13] each with resource "METHOD /path", url, description, price ("$0.005" ...), inputSchema
+      and tags, and freeResources[24] (health, openapi, skill, dashboard, finder, router, catalog, mcp,
+      a2a, the beacons, club and party routes, all "free"). Read into plans/ and conformance/.
+  - path: /.well-known/qorevia-router.json
+    status: 200
+    content_type: application/json; charset=utf-8
+    bytes: 1554
+    file: flowhomes-eu-qorevia-router.json
+    standard: none (vendor router feed)
+    note: 'version 3.7.2; free {try, finder, catalog, agentCard, openapi, mcp, a2a}; six highSignalIntents with finder URLs; payment {protocol x402, network eip155:8453, asset USDC, behavior "Paid routes return HTTP 402 with machine-readable payment requirements."}'
+  - path: /.well-known/qorevia-distribution.json
+    status: 200
+    content_type: application/json; charset=utf-8
+    bytes: 1469
+    file: flowhomes-eu-qorevia-distribution.json
+    standard: none (vendor)
+    note: 'Names the paid flow (registry/router -> free try/finder -> selected paid endpoint -> 402 -> x402 settlement) and a safety block {zeroSpendDefault, noOutboundSpam, noWalletCustody, noPrivateWalletKeysInProject, noAutomaticPriceChanges: all true}; verification links to 402index-verify.txt and mcp-registry-auth.'
+  - path: /.well-known/qorevia-magnet.json
+    status: 200
+    content_type: application/json; charset=utf-8
+    bytes: 1973
+    file: flowhomes-eu-qorevia-magnet.json
+    standard: none (vendor)
+    note: 'discovery.standards [A2A Agent Card, MCP Streamable HTTP, OpenAPI, x402 V2, llms.txt/skill.md]; registries [A2A Registry, Community A2A Registry, Official MCP Registry, Agent402, 402 Index, x402 Bazaar]; scout.publicPresence reports found on a2a-community, mcp-official, 402index, agent402 and not found on a2a-global or the x402 bazaars (lastScanAt 2026-09-20T00:16Z).'
+  - path: /.well-known/qorevia-club.json
+    status: 200
+    content_type: application/json; charset=utf-8
+    bytes: 2109
+    file: flowhomes-eu-qorevia-club.json
+    standard: none (vendor)
+    note: 'Founders Network manifest (version 3.6.0): three tiers FOUNDING_AGENT / INSIDER_AGENT / QOREVIA_PRIME qualified only by external Base Mainnet x402 payment counts or referred payers; referral attribution via ?ref=QF-... or X-Qorevia-Ref. Same body as GET /api/club.'
+  - path: /.well-known/mcp-registry-auth
+    status: 200
+    content_type: text/plain; charset=utf-8
+    bytes: 66
+    file: flowhomes-eu-mcp-registry-auth.txt
+    standard: Official MCP Registry HTTP domain-ownership proof
+    note: 'v=MCPv1; k=ed25519; p=<public key>. Backs the registry entry eu.flowhomes.api/qorevia-market-intelligence.'
+  - path: /.well-known/402index-verify.txt
+    status: 200
+    content_type: text/plain
+    bytes: 64
+    file: flowhomes-eu-402index-verify.txt
+    standard: none (402index.com listing verification token)
+  - {path: /.well-known/security.txt, status: 404}
+  - {path: /security.txt, status: 404, note: not probed separately — see security/ probe}
+  - {path: /.well-known/openid-configuration, status: 404}
+  - {path: /.well-known/oauth-authorization-server, status: 404}
+  - path: /.well-known/oauth-protected-resource
+    status: 404
+    note: This host is the MCP resource server; RFC 9728 would place the document here. The MCP server needs no authorization, so its absence is consistent, not a broken pointer.
+  - {path: /.well-known/api-catalog, status: 404}
+  - {path: /.well-known/api-catalog.json, status: 404}
+  - {path: /.well-known/ai-plugin.json, status: 404}
+  - {path: /.well-known/ucp.json, status: 404}
+  - {path: /.well-known/acp.json, status: 404}
+  - {path: /.well-known/aauth-resource.json, status: 404}
+  - {path: /.well-known/apis.json, status: 404}
+  - {path: /apis.json, status: 404}
+  - {path: /apis.yml, status: 404}
+  - {path: /.well-known/mcp.json, status: 404}
+  - {path: /.well-known/mcp/server-card.json, status: 404}
+  - {path: /.well-known/mcp-server-card.json, status: 404}
+  - {path: /.well-known/agents.json, status: 404}
+  - {path: /.well-known/agent-skills-index.json, status: 404}
+  - {path: /.well-known/agent-payments.json, status: 404}
+  - {path: /.well-known/erc8004.json, status: 404}
+  - {path: /.well-known/humans.txt, status: 404}
+  - path: /openapi.json
+    status: 200
+    content_type: application/json; charset=utf-8
+    bytes: 18493
+    file: ../openapi/flowhomes-eu-openapi.json
+    standard: OpenAPI 3.1.0
+    note: '"Qorevia Market Intelligence" 2.0.0, 34 paths, servers https://api.flowhomes.eu. /openapi.yaml, /swagger.json, /v1/openapi.json, /api-docs, /docs and /redoc are 404.'
+  - path: /llms.txt
+    status: 200
+    content_type: text/plain; charset=utf-8
+    bytes: 3179
+    file: ../llms/flowhomes-eu-llms.txt
+    note: Served body contains a generator defect — the "QOREVIA AUTO PRODUCTS" block is nested inside itself five times. Saved verbatim.
+  - path: /skill.md
+    status: 200
+    content_type: text/markdown; charset=utf-8
+    bytes: 3292
+    file: ../skills/flowhomes-eu-skill.md
+    note: Provider-authored agent documentation (base URL, discovery links, the 13 paid tools with prices, the x402 call flow). Bytes contain mojibake ("â€”") from a double-encoded em dash.
+  - {path: /robots.txt, status: 200, content_type: text/plain; charset=utf-8, bytes: 69, note: 'User-agent: * Allow: / ; Sitemap: https://api.flowhomes.eu/sitemap.xml'}
+  - {path: /sitemap.xml, status: 200, content_type: application/xml; charset=utf-8, bytes: 902, note: 13 URLs — the card, three beacons, try/find/catalog, mcp, a2a, openapi.json, skill.md, llms.txt, party.}
+  - {path: /health, status: 200, content_type: application/json; charset=utf-8, note: '{"ok":true,"service":"Qorevia Market Intelligence","mode":"x402","network":"eip155:8453","publicOrigin":...,"payTo":...,"facilitator":"https://facilitator.payai.network","mt5":{"ok":true,"connected":true,"terminal":"Eightcap Global MT5 Terminal","tradeAllowed":false,"mode":"READ_ONLY"}}'}
+  - path: /.well-known/apievangelist-negative-control-7f3a9c.json
+    status: 404
+    control: negative
+    note: A path that cannot exist. Express HTML "Cannot GET ..." 193 bytes — the same document as every other miss on this host. No path echo, no catch-all.
+- host: flowhomes.eu
+  role: Registrable domain. Resolves (A 216.24.57.1) but serves no site.
+  documents:
+  - {path: /, status: 0, note: 'TLS handshake failure on 443 (SSL alert handshake failure — no certificate presented for this SNI). Plain http://flowhomes.eu/ returns HTTP 409 text/plain "error code: 1001" (Cloudflare DNS resolution error).'}
+  - {path: /.well-known/agent-card.json, status: 0, note: unreachable (TLS)}
+  - {path: /.well-known/agent.json, status: 0, note: unreachable (TLS)}
+  - {path: /.well-known/security.txt, status: 0, note: unreachable (TLS)}
+  - {path: /.well-known/openid-configuration, status: 0, note: unreachable (TLS)}
+  - {path: /.well-known/oauth-authorization-server, status: 0, note: unreachable (TLS)}
+  - {path: /.well-known/oauth-protected-resource, status: 0, note: unreachable (TLS)}
+  - {path: /.well-known/api-catalog, status: 0, note: unreachable (TLS)}
+  - {path: /.well-known/ai-plugin.json, status: 0, note: unreachable (TLS)}
+  - {path: /.well-known/ucp.json, status: 0, note: unreachable (TLS)}
+  - {path: /.well-known/acp.json, status: 0, note: unreachable (TLS)}
+  - {path: /.well-known/aauth-resource.json, status: 0, note: unreachable (TLS)}
+  - {path: /.well-known/apis.json, status: 0, note: unreachable (TLS)}
+  - {path: /apis.json, status: 0, note: unreachable (TLS)}
+  - {path: /apis.yml, status: 0, note: unreachable (TLS)}
+  - {path: /llms.txt, status: 0, note: unreachable (TLS)}
+  - {path: /robots.txt, status: 0, note: unreachable (TLS)}
+- host: www.flowhomes.eu
+  role: CNAME base44.onrender.com -> Render; no certificate, no site.
+  documents:
+  - {path: /, status: 0, note: 'TLS handshake failure on 443; http:// returns 409 "error code: 1001", same as the apex.'}
+  - {path: /.well-known/agent-card.json, status: 0, note: unreachable (TLS)}
+  - {path: /.well-known/agent.json, status: 0, note: unreachable (TLS)}
+  - {path: /.well-known/security.txt, status: 0, note: unreachable (TLS)}
+  - {path: /.well-known/openid-configuration, status: 0, note: unreachable (TLS)}
+  - {path: /.well-known/oauth-authorization-server, status: 0, note: unreachable (TLS)}
+  - {path: /.well-known/oauth-protected-resource, status: 0, note: unreachable (TLS)}
+  - {path: /.well-known/api-catalog, status: 0, note: unreachable (TLS)}
+  - {path: /.well-known/ai-plugin.json, status: 0, note: unreachable (TLS)}
+  - {path: /.well-known/ucp.json, status: 0, note: unreachable (TLS)}
+  - {path: /.well-known/acp.json, status: 0, note: unreachable (TLS)}
+  - {path: /.well-known/aauth-resource.json, status: 0, note: unreachable (TLS)}
+  - {path: /.well-known/apis.json, status: 0, note: unreachable (TLS)}
+  - {path: /apis.json, status: 0, note: unreachable (TLS)}
+  - {path: /apis.yml, status: 0, note: unreachable (TLS)}
+other_hosts_probed:
+- {host: mcp.flowhomes.eu, result: not probed — the MCP host is api.flowhomes.eu per the live server, the agent card and the registry entry}

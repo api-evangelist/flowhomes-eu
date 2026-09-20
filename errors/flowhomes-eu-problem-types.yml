@@ -1,0 +1,76 @@
+generated: '2026-09-19'
+method: derived
+format: custom
+source: >-
+  openapi/flowhomes-eu-openapi.json (402 and 503 declared on all 13 paid operations, description only, no
+  schema; the 21 free paths declare only 200) plus live unauthenticated responses observed on
+  api.flowhomes.eu 2026-09-19 (402 with PAYMENT-REQUIRED header, JSON-RPC errors on /mcp and /a2a, router
+  and club envelopes, Express HTML 404). No error reference page is published; skill.md documents the
+  402 flow in one sentence.
+envelope:
+  content_type: application/json (paid routes and JSON surfaces); text/html (unknown paths)
+  shape: >-
+    No single envelope. Paid routes signal with HTTP status + the PAYMENT-REQUIRED response header and an
+    empty JSON body; free JSON routes use {ok: false, reason|error, suggestion?}; /mcp and /a2a use the
+    JSON-RPC 2.0 error object {code, message}.
+  observed:
+  - {http_status: 402, request: 'GET /api/session-state (no payment)', body: '{}', headers: 'payment-required: <base64 x402 v2 requirements>, cache-control: no-store'}
+  - {http_status: 402, request: 'POST /api/csv-profile {"csv":"a,b\n1,2"} (no payment)', body: '{}', headers: 'payment-required: <base64>'}
+  - {http_status: 200, request: 'POST /api/route {"q":"decode a jwt"}', body: '{"ok":false,"query":"","reason":"NO_MATCH","suggestion":"Use /api/catalog to inspect available tools."}'}
+  - {http_status: 200, request: 'GET /api/club/status (no wallet)', body: '{"ok":false,"error":"invalid_wallet"}'}
+  - {http_status: 200, request: 'POST /mcp resources/list', body: '{"jsonrpc":"2.0","id":4,"error":{"code":-32601,"message":"Method not found"}}'}
+  - {http_status: 200, request: 'POST /a2a tasks/get {id: probe-nonexistent}', body: '{"jsonrpc":"2.0","id":2,"error":{"code":-32001,"message":"Task not found"}}'}
+  - {http_status: 404, request: 'GET /mcp, GET /a2a, GET /docs, GET /.well-known/*', body: 'Express HTML "Cannot GET <path>"'}
+  note: >-
+    No error code field on the paid routes, no type URI, no request id and no application/problem+json.
+    Application-level failures on the free JSON routes come back as HTTP 200 with ok:false, so a client
+    must read the body, not the status.
+problems:
+- status: 402
+  title: x402 payment required
+  source_operations: [session_state, risk_levels, strategy_grade, xau_quote, xau_bars, xau_market_state, csv_profile, json_shape, jwt_decode, tick_pnl, evm_address_syntax, ohlcv_state, regex_test]
+  spec_description: x402 payment required
+  observed: >-
+    HTTP 402, body {}, header PAYMENT-REQUIRED = base64(JSON) with x402Version 2, resource {url,
+    description, mimeType}, accepts[{scheme exact, network eip155:8453, amount (USDC base units, e.g.
+    "5000" = $0.005), asset 0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913, payTo
+    0x80cdA9077d65Ac1a05454619Bb94B318cf0c3382, maxTimeoutSeconds 300}], extensions.bazaar {input/output
+    example and JSON Schema}.
+  remediation: >-
+    Decode the header, pay the exact amount in USDC on Base (eip155:8453) to payTo through an x402
+    client/facilitator (the manifest names https://facilitator.payai.network), and retry the identical
+    request within maxTimeoutSeconds carrying the PAYMENT-SIGNATURE header (skill.md: "make the request
+    normally, read the HTTP 402 payment requirements, pay using x402, and retry with PAYMENT-SIGNATURE").
+    The 402 is free and doubles as a price/schema preflight.
+- status: 503
+  title: Upstream market-data source unavailable
+  source_operations: [session_state, risk_levels, strategy_grade, xau_quote, xau_bars, xau_market_state, csv_profile, json_shape, jwt_decode, tick_pnl, evm_address_syntax, ohlcv_state, regex_test]
+  spec_description: 'Upstream market-data source unavailable; payment is not requested for MT5 routes during preflight failure.'
+  remediation: >-
+    Declared on every paid operation but meaningful for the three MetaTrader 5 routes (xau_quote,
+    xau_bars, xau_market_state): the server preflights the MT5 terminal and, when it is down, returns
+    503 WITHOUT a 402, so no payment is requested for a call that cannot be served. Check GET /health
+    (mt5.connected) before paying; retry later.
+- status: 200
+  title: 'Router no match (ok:false, reason NO_MATCH)'
+  source_operations: ['POST /api/route', 'GET /api/find']
+  observed: '{"ok":false,"query":"","reason":"NO_MATCH","suggestion":"Use /api/catalog to inspect available tools."}'
+  remediation: Rephrase the intent or browse GET /api/catalog (13 items, each with key, path, inputSchema, price). An empty echoed query means the request field was not read; the MCP tool uses `query`.
+- status: 200
+  title: 'Founders Network invalid_wallet'
+  source_operations: ['GET /api/club/status', 'POST /api/club/referral/create', 'POST /api/club/lounge/check-in']
+  observed: '{"ok":false,"error":"invalid_wallet"}'
+  remediation: Supply a valid 20-byte EVM address (0x + 40 hex) as the wallet; membership tiers are computed from that wallet's external Base Mainnet x402 payment history.
+- status: 404
+  title: Route not found
+  observed: Express HTML "Cannot GET <path>" (also returned for GET on the POST-only /mcp and /a2a).
+  remediation: Use POST for /mcp and /a2a; consult /openapi.json or /sitemap.xml for the served paths. There is no JSON 404.
+- status: 200
+  title: JSON-RPC -32601 Method not found
+  source_operations: ['POST /mcp', 'POST /a2a']
+  observed: resources/list and prompts/list on /mcp; agent/getAuthenticatedExtendedCard on /a2a.
+  remediation: The MCP server implements tools/* only; the A2A agent implements message/send and tasks/get.
+- status: 200
+  title: JSON-RPC -32001 Task not found (A2A)
+  source_operations: ['POST /a2a tasks/get']
+  remediation: Task ids are returned by message/send; the agent completes synchronously, so polling is rarely needed.
