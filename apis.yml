@@ -36,8 +36,8 @@ tags:
 - x402
 - USDC
 - Base L2
-- Agent Commerce
-- Pay Per Call
+- Agentic Commerce
+- pay-per-call
 - MCP
 - A2A
 - Agents
@@ -61,6 +61,8 @@ tags_raw:
 - A2A
 - Agents
 - Agent-native
+- Agent Commerce
+- Pay Per Call
 apis:
 - aid: flowhomes-eu:qorevia-market-intelligence-api
   name: Qorevia Market Intelligence API
