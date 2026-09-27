@@ -1,0 +1,21 @@
+openapi: 3.2.0
+info:
+  title: Qorevia Market Intelligence A2a API
+  version: 2.0.0
+  description: Agent-payable market intelligence, data profiling and deterministic utility tools.
+  x-guidance: Use these tools for market/session/risk/backtest context and local data profiling. Paid routes use HTTP 402/x402 and settle USDC directly to the provider wallet.
+servers:
+- url: https://api.flowhomes.eu
+tags:
+- name: A2a
+paths:
+  /a2a:
+    post:
+      summary: A2A JSON-RPC discovery/router surface
+      responses:
+        '200':
+          description: A2A JSON-RPC response
+      tags:
+      - A2a
+      operationId: postA2a
+      x-operation-id-source: derived

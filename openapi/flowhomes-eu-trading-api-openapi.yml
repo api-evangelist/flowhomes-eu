@@ -1,0 +1,47 @@
+openapi: 3.2.0
+info:
+  title: Qorevia Market Intelligence Trading API
+  version: 2.0.0
+  description: Agent-payable market intelligence, data profiling and deterministic utility tools.
+  x-guidance: Use these tools for market/session/risk/backtest context and local data profiling. Paid routes use HTTP 402/x402 and settle USDC directly to the provider wallet.
+servers:
+- url: https://api.flowhomes.eu
+tags:
+- name: Trading
+paths:
+  /api/session-state:
+    get:
+      summary: Deterministic trading-session state for London, New York and Asia in…
+      operationId: session_state
+      tags:
+      - Trading
+      parameters:
+      - name: dateTime
+        in: query
+        required: false
+        schema:
+          type: string
+          description: Optional ISO-8601 timestamp; defaults to current time.
+      responses:
+        '200':
+          description: Paid response
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+              example:
+                timezone: Europe/Vienna
+                london: true
+                newYork: false
+                asia: false
+                minuteOfDay: 555
+        '402':
+          description: x402 payment required
+        '503':
+          description: Upstream market-data source unavailable; payment is not requested for MT5 routes during preflight failure.
+      x-payment-info:
+        price: '0.005000'
+        currency: USDC
+        network: eip155:8453
+        protocol: x402

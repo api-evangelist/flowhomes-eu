@@ -1,0 +1,84 @@
+openapi: 3.2.0
+info:
+  title: Qorevia Market Intelligence JSON API
+  version: 2.0.0
+  description: Agent-payable market intelligence, data profiling and deterministic utility tools.
+  x-guidance: Use these tools for market/session/risk/backtest context and local data profiling. Paid routes use HTTP 402/x402 and settle USDC directly to the provider wallet.
+servers:
+- url: https://api.flowhomes.eu
+tags:
+- name: Json
+paths:
+  /api/json-shape:
+    post:
+      summary: Describe the structural shape of supplied JSON locally using normalized paths…
+      operationId: json_shape
+      tags:
+      - Json
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                value:
+                  description: Any JSON value to inspect.
+                maxDepth:
+                  type: integer
+                  minimum: 1
+                  maximum: 12
+                  description: Maximum traversal depth; defaults to 8.
+                maxPaths:
+                  type: integer
+                  minimum: 10
+                  maximum: 1000
+                  description: Maximum distinct normalized paths returned; defaults to 500.
+              required:
+              - value
+            example:
+              value:
+                user:
+                  id: 1
+                  name: Ada
+                items:
+                - sku: A
+                - sku: B
+              maxDepth: 8
+      responses:
+        '200':
+          description: Paid response
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+              example:
+                rootType: object
+                pathCount: 6
+                paths:
+                - path: $
+                  types:
+                  - object
+                  occurrences: 1
+                - path: $.user.id
+                  types:
+                  - integer
+                  occurrences: 1
+                - path: $.items[]
+                  types:
+                  - object
+                  occurrences: 2
+                - path: $.items[].sku
+                  types:
+                  - string
+                  occurrences: 2
+        '402':
+          description: x402 payment required
+        '503':
+          description: Upstream market-data source unavailable; payment is not requested for MT5 routes during preflight failure.
+      x-payment-info:
+        price: '0.002500'
+        currency: USDC
+        network: eip155:8453
+        protocol: x402

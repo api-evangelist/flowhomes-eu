@@ -1,0 +1,59 @@
+openapi: 3.2.0
+info:
+  title: Qorevia Market Intelligence Quant API
+  version: 2.0.0
+  description: Agent-payable market intelligence, data profiling and deterministic utility tools.
+  x-guidance: Use these tools for market/session/risk/backtest context and local data profiling. Paid routes use HTTP 402/x402 and settle USDC directly to the provider wallet.
+servers:
+- url: https://api.flowhomes.eu
+tags:
+- name: quant
+paths:
+  /api/ohlcv-state:
+    post:
+      summary: Compute simple return range position and true-range average from supplied OHLCV…
+      operationId: ohlcv_state
+      tags:
+      - quant
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                bars:
+                  type: array
+              required:
+              - bars
+            example:
+              bars:
+              - open: 100
+                high: 102
+                low: 99
+                close: 101
+              - open: 101
+                high: 103
+                low: 100
+                close: 102
+      responses:
+        '200':
+          description: Paid response
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+              example:
+                returnPct: 1
+                rangePosition: 0.75
+                atr: 3
+        '402':
+          description: x402 payment required
+        '503':
+          description: Upstream market-data source unavailable; payment is not requested for MT5 routes during preflight failure.
+      x-payment-info:
+        price: '0.002500'
+        currency: USDC
+        network: eip155:8453
+        protocol: x402

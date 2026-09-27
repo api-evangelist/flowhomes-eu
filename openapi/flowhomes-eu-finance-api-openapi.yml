@@ -1,0 +1,365 @@
+openapi: 3.2.0
+info:
+  title: Qorevia Market Intelligence Finance API
+  version: 2.0.0
+  description: Agent-payable market intelligence, data profiling and deterministic utility tools.
+  x-guidance: Use these tools for market/session/risk/backtest context and local data profiling. Paid routes use HTTP 402/x402 and settle USDC directly to the provider wallet.
+servers:
+- url: https://api.flowhomes.eu
+tags:
+- name: finance
+paths:
+  /api/session-state:
+    get:
+      summary: Deterministic trading-session state for London, New York and Asia in…
+      operationId: session_state
+      tags:
+      - finance
+      parameters:
+      - name: dateTime
+        in: query
+        required: false
+        schema:
+          type: string
+          description: Optional ISO-8601 timestamp; defaults to current time.
+      responses:
+        '200':
+          description: Paid response
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+              example:
+                timezone: Europe/Vienna
+                london: true
+                newYork: false
+                asia: false
+                minuteOfDay: 555
+        '402':
+          description: x402 payment required
+        '503':
+          description: Upstream market-data source unavailable; payment is not requested for MT5 routes during preflight failure.
+      x-payment-info:
+        price: '0.005000'
+        currency: USDC
+        network: eip155:8453
+        protocol: x402
+  /api/risk-levels:
+    post:
+      summary: Calculate deterministic stop-loss, take-profit, risk/reward and price distances…
+      operationId: risk_levels
+      tags:
+      - finance
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                entry:
+                  type: number
+                  description: Entry price.
+                direction:
+                  type: string
+                  enum:
+                  - long
+                  - short
+                  description: Trade direction.
+                slPct:
+                  type: number
+                  description: Stop percentage, e.g. 0.05 means 0.05%.
+                tpPct:
+                  type: number
+                  description: Target percentage, e.g. 0.04 means 0.04%.
+              required:
+              - entry
+              - direction
+              - slPct
+              - tpPct
+            example:
+              entry: 3500
+              direction: long
+              slPct: 0.05
+              tpPct: 0.04
+      responses:
+        '200':
+          description: Paid response
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+              example:
+                entry: 3500
+                direction: long
+                stop: 3498.25
+                target: 3501.4
+                riskReward: 0.8
+        '402':
+          description: x402 payment required
+        '503':
+          description: Upstream market-data source unavailable; payment is not requested for MT5 routes during preflight failure.
+      x-payment-info:
+        price: '0.005000'
+        currency: USDC
+        network: eip155:8453
+        protocol: x402
+  /api/strategy-grade:
+    post:
+      summary: Deterministic strategy robustness score from trades, profit factor, win rate…
+      operationId: strategy_grade
+      tags:
+      - finance
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                trades:
+                  type: number
+                profitFactor:
+                  type: number
+                winRatePct:
+                  type: number
+                maxDrawdownPct:
+                  type: number
+                walkForwardPassPct:
+                  type: number
+              required:
+              - trades
+              - profitFactor
+              - winRatePct
+              - maxDrawdownPct
+              - walkForwardPassPct
+            example:
+              trades: 300
+              profitFactor: 1.35
+              winRatePct: 57
+              maxDrawdownPct: 8
+              walkForwardPassPct: 75
+      responses:
+        '200':
+          description: Paid response
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+              example:
+                score: 72.8
+                components:
+                  sample: 90
+                  pf: 58
+                  drawdown: 73
+                  walkForward: 75
+        '402':
+          description: x402 payment required
+        '503':
+          description: Upstream market-data source unavailable; payment is not requested for MT5 routes during preflight failure.
+      x-payment-info:
+        price: '0.020000'
+        currency: USDC
+        network: eip155:8453
+        protocol: x402
+  /api/xau/quote:
+    get:
+      summary: Live XAUUSD bid/ask/last/spread snapshot from a read-only local MetaTrader 5…
+      operationId: xau_quote
+      tags:
+      - finance
+      parameters:
+      - name: symbol
+        in: query
+        required: false
+        schema:
+          type: string
+          description: MT5 symbol, defaults to configured XAUUSD symbol.
+      responses:
+        '200':
+          description: Paid response
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+              example:
+                symbol: XAUUSD
+                bid: 3500.1
+                ask: 3500.3
+                spread: 0.2
+                time: '2026-09-18T19:15:00Z'
+        '402':
+          description: x402 payment required
+        '503':
+          description: Upstream market-data source unavailable; payment is not requested for MT5 routes during preflight failure.
+      x-payment-info:
+        price: '0.010000'
+        currency: USDC
+        network: eip155:8453
+        protocol: x402
+  /api/xau/bars:
+    get:
+      summary: Recent XAUUSD OHLCV bars from a read-only local MetaTrader 5 terminal.
+      operationId: xau_bars
+      tags:
+      - finance
+      parameters:
+      - name: timeframe
+        in: query
+        required: false
+        schema:
+          type: string
+          enum:
+          - M1
+          - M5
+          - M15
+          - H1
+      - name: count
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 10
+          maximum: 500
+      responses:
+        '200':
+          description: Paid response
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+              example:
+                symbol: XAUUSD
+                timeframe: M5
+                count: 100
+                bars:
+                - time: '...'
+                  open: 1
+                  high: 2
+                  low: 0.5
+                  close: 1.5
+                  tick_volume: 123
+        '402':
+          description: x402 payment required
+        '503':
+          description: Upstream market-data source unavailable; payment is not requested for MT5 routes during preflight failure.
+      x-payment-info:
+        price: '0.020000'
+        currency: USDC
+        network: eip155:8453
+        protocol: x402
+  /api/xau/market-state:
+    get:
+      summary: 'Computed XAUUSD market state from MT5 bars: return, ATR, range position…'
+      operationId: xau_market_state
+      tags:
+      - finance
+      parameters:
+      - name: timeframe
+        in: query
+        required: false
+        schema:
+          type: string
+          enum:
+          - M1
+          - M5
+          - M15
+          - H1
+      - name: count
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 30
+          maximum: 500
+      responses:
+        '200':
+          description: Paid response
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+              example:
+                symbol: XAUUSD
+                trend: up
+                atr: 2.1
+                realizedVolPct: 0.34
+                rangePosition: 0.71
+                returnPct: 0.12
+        '402':
+          description: x402 payment required
+        '503':
+          description: Upstream market-data source unavailable; payment is not requested for MT5 routes during preflight failure.
+      x-payment-info:
+        price: '0.030000'
+        currency: USDC
+        network: eip155:8453
+        protocol: x402
+  /api/tick-pnl:
+    post:
+      summary: Calculate PnL from entry exit contracts tick size and tick value
+      operationId: tick_pnl
+      tags:
+      - finance
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                entry:
+                  type: number
+                exit:
+                  type: number
+                contracts:
+                  type: number
+                tickSize:
+                  type: number
+                tickValue:
+                  type: number
+                direction:
+                  type: string
+                  enum:
+                  - long
+                  - short
+              required:
+              - entry
+              - exit
+              - contracts
+              - tickSize
+              - tickValue
+              - direction
+            example:
+              entry: 100
+              exit: 101
+              contracts: 2
+              tickSize: 0.25
+              tickValue: 12.5
+              direction: long
+      responses:
+        '200':
+          description: Paid response
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+              example:
+                ticks: 4
+                pnl: 100
+        '402':
+          description: x402 payment required
+        '503':
+          description: Upstream market-data source unavailable; payment is not requested for MT5 routes during preflight failure.
+      x-payment-info:
+        price: '0.050000'
+        currency: USDC
+        network: eip155:8453
+        protocol: x402

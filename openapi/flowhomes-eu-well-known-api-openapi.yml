@@ -1,0 +1,61 @@
+openapi: 3.2.0
+info:
+  title: Qorevia Market Intelligence .well Known API
+  version: 2.0.0
+  description: Agent-payable market intelligence, data profiling and deterministic utility tools.
+  x-guidance: Use these tools for market/session/risk/backtest context and local data profiling. Paid routes use HTTP 402/x402 and settle USDC directly to the provider wallet.
+servers:
+- url: https://api.flowhomes.eu
+tags:
+- name: .well Known
+paths:
+  /.well-known/qorevia-router.json:
+    get:
+      summary: Qorevia router/amplifier feed
+      responses:
+        '200':
+          description: Router feed
+      tags:
+      - .well Known
+      operationId: getWellKnownQoreviaRouterJson
+      x-operation-id-source: derived
+  /.well-known/qorevia-distribution.json:
+    get:
+      summary: Qorevia Distribution Boost manifest
+      responses:
+        '200':
+          description: Distribution manifest
+      tags:
+      - .well Known
+      operationId: getWellKnownQoreviaDistributionJson
+      x-operation-id-source: derived
+  /.well-known/qorevia-magnet.json:
+    get:
+      summary: Qorevia Agent Magnet machine-readable distribution beacon
+      responses:
+        '200':
+          description: Agent Magnet manifest
+      tags:
+      - .well Known
+      operationId: getWellKnownQoreviaMagnetJson
+      x-operation-id-source: derived
+  /.well-known/agent.json:
+    get:
+      summary: Legacy alias for the standard A2A Agent Card
+      responses:
+        '200':
+          description: A2A Agent Card
+      tags:
+      - .well Known
+      operationId: getWellKnownAgentJson
+      x-operation-id-source: derived
+  /.well-known/qorevia-club.json:
+    get:
+      summary: Machine-readable Qorevia Founders Network invite beacon
+      responses:
+        '200':
+          description: Founders Network manifest
+      tags:
+      - .well Known
+      operationId: getWellKnownQoreviaClubJson
+      x-operation-id-source: derived

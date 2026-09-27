@@ -1,0 +1,72 @@
+openapi: 3.2.0
+info:
+  title: Qorevia Market Intelligence Risk API
+  version: 2.0.0
+  description: Agent-payable market intelligence, data profiling and deterministic utility tools.
+  x-guidance: Use these tools for market/session/risk/backtest context and local data profiling. Paid routes use HTTP 402/x402 and settle USDC directly to the provider wallet.
+servers:
+- url: https://api.flowhomes.eu
+tags:
+- name: Risk
+paths:
+  /api/risk-levels:
+    post:
+      summary: Calculate deterministic stop-loss, take-profit, risk/reward and price distances…
+      operationId: risk_levels
+      tags:
+      - Risk
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                entry:
+                  type: number
+                  description: Entry price.
+                direction:
+                  type: string
+                  enum:
+                  - long
+                  - short
+                  description: Trade direction.
+                slPct:
+                  type: number
+                  description: Stop percentage, e.g. 0.05 means 0.05%.
+                tpPct:
+                  type: number
+                  description: Target percentage, e.g. 0.04 means 0.04%.
+              required:
+              - entry
+              - direction
+              - slPct
+              - tpPct
+            example:
+              entry: 3500
+              direction: long
+              slPct: 0.05
+              tpPct: 0.04
+      responses:
+        '200':
+          description: Paid response
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+              example:
+                entry: 3500
+                direction: long
+                stop: 3498.25
+                target: 3501.4
+                riskReward: 0.8
+        '402':
+          description: x402 payment required
+        '503':
+          description: Upstream market-data source unavailable; payment is not requested for MT5 routes during preflight failure.
+      x-payment-info:
+        price: '0.005000'
+        currency: USDC
+        network: eip155:8453
+        protocol: x402

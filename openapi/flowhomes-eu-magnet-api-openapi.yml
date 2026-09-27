@@ -1,0 +1,31 @@
+openapi: 3.2.0
+info:
+  title: Qorevia Market Intelligence Magnet API
+  version: 2.0.0
+  description: Agent-payable market intelligence, data profiling and deterministic utility tools.
+  x-guidance: Use these tools for market/session/risk/backtest context and local data profiling. Paid routes use HTTP 402/x402 and settle USDC directly to the provider wallet.
+servers:
+- url: https://api.flowhomes.eu
+tags:
+- name: Magnet
+paths:
+  /api/magnet:
+    get:
+      summary: Qorevia Agent Magnet manifest
+      responses:
+        '200':
+          description: Agent Magnet manifest
+      tags:
+      - Magnet
+      operationId: getApiMagnet
+      x-operation-id-source: derived
+  /api/magnet/stats:
+    get:
+      summary: Privacy-safe Agent Magnet scanner aggregates
+      responses:
+        '200':
+          description: Agent Magnet aggregate stats
+      tags:
+      - Magnet
+      operationId: getApiMagnetStats
+      x-operation-id-source: derived

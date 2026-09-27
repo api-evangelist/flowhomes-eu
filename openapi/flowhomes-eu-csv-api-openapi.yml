@@ -1,0 +1,82 @@
+openapi: 3.2.0
+info:
+  title: Qorevia Market Intelligence CSV API
+  version: 2.0.0
+  description: Agent-payable market intelligence, data profiling and deterministic utility tools.
+  x-guidance: Use these tools for market/session/risk/backtest context and local data profiling. Paid routes use HTTP 402/x402 and settle USDC directly to the provider wallet.
+servers:
+- url: https://api.flowhomes.eu
+tags:
+- name: CSV
+paths:
+  /api/csv-profile:
+    post:
+      summary: 'Profile supplied CSV locally: rows, columns, missing values, unique counts…'
+      operationId: csv_profile
+      tags:
+      - CSV
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                csv:
+                  type: string
+                  description: CSV text to profile. Request body is bounded by the service HTTP limit.
+                delimiter:
+                  type: string
+                  description: auto, comma, semicolon, tab, pipe, or the literal delimiter character.
+                hasHeader:
+                  type: boolean
+                  description: Defaults to true.
+              required:
+              - csv
+            example:
+              csv: 'name,age
+
+                Ada,36
+
+                Bob,
+
+                Cara,29'
+              delimiter: auto
+              hasHeader: true
+      responses:
+        '200':
+          description: Paid response
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+              example:
+                delimiter: ','
+                rows: 3
+                columnCount: 2
+                columns:
+                - name: name
+                  inferredType: string
+                  nonEmpty: 3
+                  missing: 0
+                  uniqueCount: 3
+                - name: age
+                  inferredType: integer
+                  nonEmpty: 2
+                  missing: 1
+                  uniqueCount: 2
+                  numeric:
+                    count: 2
+                    min: 29
+                    max: 36
+                    mean: 32.5
+        '402':
+          description: x402 payment required
+        '503':
+          description: Upstream market-data source unavailable; payment is not requested for MT5 routes during preflight failure.
+      x-payment-info:
+        price: '0.002500'
+        currency: USDC
+        network: eip155:8453
+        protocol: x402

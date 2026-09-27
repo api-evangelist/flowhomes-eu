@@ -1,0 +1,147 @@
+openapi: 3.2.0
+info:
+  title: Qorevia Market Intelligence Gold API
+  version: 2.0.0
+  description: Agent-payable market intelligence, data profiling and deterministic utility tools.
+  x-guidance: Use these tools for market/session/risk/backtest context and local data profiling. Paid routes use HTTP 402/x402 and settle USDC directly to the provider wallet.
+servers:
+- url: https://api.flowhomes.eu
+tags:
+- name: gold
+paths:
+  /api/xau/quote:
+    get:
+      summary: Live XAUUSD bid/ask/last/spread snapshot from a read-only local MetaTrader 5…
+      operationId: xau_quote
+      tags:
+      - gold
+      parameters:
+      - name: symbol
+        in: query
+        required: false
+        schema:
+          type: string
+          description: MT5 symbol, defaults to configured XAUUSD symbol.
+      responses:
+        '200':
+          description: Paid response
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+              example:
+                symbol: XAUUSD
+                bid: 3500.1
+                ask: 3500.3
+                spread: 0.2
+                time: '2026-09-18T19:15:00Z'
+        '402':
+          description: x402 payment required
+        '503':
+          description: Upstream market-data source unavailable; payment is not requested for MT5 routes during preflight failure.
+      x-payment-info:
+        price: '0.010000'
+        currency: USDC
+        network: eip155:8453
+        protocol: x402
+  /api/xau/bars:
+    get:
+      summary: Recent XAUUSD OHLCV bars from a read-only local MetaTrader 5 terminal.
+      operationId: xau_bars
+      tags:
+      - gold
+      parameters:
+      - name: timeframe
+        in: query
+        required: false
+        schema:
+          type: string
+          enum:
+          - M1
+          - M5
+          - M15
+          - H1
+      - name: count
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 10
+          maximum: 500
+      responses:
+        '200':
+          description: Paid response
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+              example:
+                symbol: XAUUSD
+                timeframe: M5
+                count: 100
+                bars:
+                - time: '...'
+                  open: 1
+                  high: 2
+                  low: 0.5
+                  close: 1.5
+                  tick_volume: 123
+        '402':
+          description: x402 payment required
+        '503':
+          description: Upstream market-data source unavailable; payment is not requested for MT5 routes during preflight failure.
+      x-payment-info:
+        price: '0.020000'
+        currency: USDC
+        network: eip155:8453
+        protocol: x402
+  /api/xau/market-state:
+    get:
+      summary: 'Computed XAUUSD market state from MT5 bars: return, ATR, range position…'
+      operationId: xau_market_state
+      tags:
+      - gold
+      parameters:
+      - name: timeframe
+        in: query
+        required: false
+        schema:
+          type: string
+          enum:
+          - M1
+          - M5
+          - M15
+          - H1
+      - name: count
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 30
+          maximum: 500
+      responses:
+        '200':
+          description: Paid response
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+              example:
+                symbol: XAUUSD
+                trend: up
+                atr: 2.1
+                realizedVolPct: 0.34
+                rangePosition: 0.71
+                returnPct: 0.12
+        '402':
+          description: x402 payment required
+        '503':
+          description: Upstream market-data source unavailable; payment is not requested for MT5 routes during preflight failure.
+      x-payment-info:
+        price: '0.030000'
+        currency: USDC
+        network: eip155:8453
+        protocol: x402

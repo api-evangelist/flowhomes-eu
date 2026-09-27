@@ -1,0 +1,70 @@
+openapi: 3.2.0
+info:
+  title: Qorevia Market Intelligence Backtest API
+  version: 2.0.0
+  description: Agent-payable market intelligence, data profiling and deterministic utility tools.
+  x-guidance: Use these tools for market/session/risk/backtest context and local data profiling. Paid routes use HTTP 402/x402 and settle USDC directly to the provider wallet.
+servers:
+- url: https://api.flowhomes.eu
+tags:
+- name: backtest
+paths:
+  /api/strategy-grade:
+    post:
+      summary: Deterministic strategy robustness score from trades, profit factor, win rate…
+      operationId: strategy_grade
+      tags:
+      - backtest
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                trades:
+                  type: number
+                profitFactor:
+                  type: number
+                winRatePct:
+                  type: number
+                maxDrawdownPct:
+                  type: number
+                walkForwardPassPct:
+                  type: number
+              required:
+              - trades
+              - profitFactor
+              - winRatePct
+              - maxDrawdownPct
+              - walkForwardPassPct
+            example:
+              trades: 300
+              profitFactor: 1.35
+              winRatePct: 57
+              maxDrawdownPct: 8
+              walkForwardPassPct: 75
+      responses:
+        '200':
+          description: Paid response
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+              example:
+                score: 72.8
+                components:
+                  sample: 90
+                  pf: 58
+                  drawdown: 73
+                  walkForward: 75
+        '402':
+          description: x402 payment required
+        '503':
+          description: Upstream market-data source unavailable; payment is not requested for MT5 routes during preflight failure.
+      x-payment-info:
+        price: '0.020000'
+        currency: USDC
+        network: eip155:8453
+        protocol: x402
