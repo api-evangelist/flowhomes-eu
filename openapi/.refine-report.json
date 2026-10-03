@@ -1,7 +1,7 @@
 {
   "provider": "flowhomes-eu",
   "sources": [
-    "flowhomes-eu-openapi.json"
+    "_original/flowhomes-eu-openapi.json"
   ],
   "outputs": [
     "flowhomes-eu-well-known-api-openapi.yml",
@@ -28,12 +28,11 @@
     "flowhomes-eu-trading-api-openapi.yml",
     "flowhomes-eu-utility-api-openapi.yml"
   ],
-  "archived": [
-    "archived openapi/flowhomes-eu-openapi.json"
-  ],
+  "archived": [],
   "errors": [],
   "warnings": [],
   "notes": [
+    "sourced from openapi/_original/ (1 archived document(s)); previously refined output at the top level was skipped rather than re-split",
     "flowhomes-eu-openapi.json: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
     "flowhomes-eu-openapi.json: tagged paths GET /api/find -> Find",
     "flowhomes-eu-openapi.json: tagged paths POST /api/route -> Route",
@@ -79,7 +78,31 @@
     "flowhomes-eu-openapi.json: declared missing tag: risk",
     "flowhomes-eu-openapi.json: declared missing tag: trading",
     "flowhomes-eu-openapi.json: declared missing tag: utility",
-    "apis.yml register: written (+23 apis, 24 total)"
+    "apis.yml register: already-registered"
   ],
-  "skipped": []
+  "skipped": [
+    "flowhomes-eu-a2a-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "flowhomes-eu-amplifier-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "flowhomes-eu-backtest-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "flowhomes-eu-catalog-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "flowhomes-eu-club-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "flowhomes-eu-csv-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "flowhomes-eu-data-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "flowhomes-eu-developer-tools-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "flowhomes-eu-distribution-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "flowhomes-eu-finance-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "flowhomes-eu-find-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "flowhomes-eu-gold-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "flowhomes-eu-json-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "flowhomes-eu-magnet-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "flowhomes-eu-mcp-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "flowhomes-eu-onchain-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "flowhomes-eu-quant-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "flowhomes-eu-risk-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "flowhomes-eu-route-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "flowhomes-eu-trading-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "flowhomes-eu-try-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "flowhomes-eu-utility-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "flowhomes-eu-well-known-api-openapi.yml: previously refined output, superseded by openapi/_original/"
+  ]
 }
