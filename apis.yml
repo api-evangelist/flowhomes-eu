@@ -107,6 +107,8 @@ apis:
   description: The A2a API from Qorevia — 1 operation(s) for a2a.
   humanURL: https://api.flowhomes.eu/
   tags:
+  - A2A
+  tags_raw:
   - A2a
   properties:
   - type: OpenAPI
@@ -149,6 +151,8 @@ apis:
   description: The backtest API from Qorevia — 1 operation(s) for backtest.
   humanURL: https://api.flowhomes.eu/
   tags:
+  - Backtest
+  tags_raw:
   - backtest
   properties:
   - type: OpenAPI
@@ -233,6 +237,8 @@ apis:
   description: The data API from Qorevia — 2 operation(s) for data.
   humanURL: https://api.flowhomes.eu/
   tags:
+  - Data
+  tags_raw:
   - data
   properties:
   - type: OpenAPI
@@ -254,6 +260,8 @@ apis:
   description: The developer-tools API from Qorevia — 2 operation(s) for developer-tools.
   humanURL: https://api.flowhomes.eu/
   tags:
+  - Developer Tools
+  tags_raw:
   - developer-tools
   properties:
   - type: OpenAPI
@@ -296,6 +304,8 @@ apis:
   description: The finance API from Qorevia — 7 operation(s) for finance.
   humanURL: https://api.flowhomes.eu/
   tags:
+  - Finance
+  tags_raw:
   - finance
   properties:
   - type: OpenAPI
@@ -338,6 +348,8 @@ apis:
   description: The gold API from Qorevia — 3 operation(s) for gold.
   humanURL: https://api.flowhomes.eu/
   tags:
+  - Gold
+  tags_raw:
   - gold
   properties:
   - type: OpenAPI
@@ -401,6 +413,8 @@ apis:
   description: The Mcp API from Qorevia — 1 operation(s) for mcp.
   humanURL: https://api.flowhomes.eu/
   tags:
+  - MCP
+  tags_raw:
   - Mcp
   properties:
   - type: OpenAPI
@@ -422,6 +436,8 @@ apis:
   description: The onchain API from Qorevia — 1 operation(s) for onchain.
   humanURL: https://api.flowhomes.eu/
   tags:
+  - Onchain
+  tags_raw:
   - onchain
   properties:
   - type: OpenAPI
@@ -464,6 +480,8 @@ apis:
   description: The risk API from Qorevia — 1 operation(s) for risk.
   humanURL: https://api.flowhomes.eu/
   tags:
+  - Risk Management
+  tags_raw:
   - risk
   properties:
   - type: OpenAPI
@@ -506,6 +524,8 @@ apis:
   description: The trading API from Qorevia — 1 operation(s) for trading.
   humanURL: https://api.flowhomes.eu/
   tags:
+  - Trading
+  tags_raw:
   - trading
   properties:
   - type: OpenAPI
@@ -548,6 +568,8 @@ apis:
   description: The utility API from Qorevia — 5 operation(s) for utility.
   humanURL: https://api.flowhomes.eu/
   tags:
+  - Utility
+  tags_raw:
   - utility
   properties:
   - type: OpenAPI
