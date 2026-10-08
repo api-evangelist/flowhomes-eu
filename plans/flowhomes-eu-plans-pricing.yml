@@ -63,3 +63,22 @@ plans:
   limits: 'No quota; MT5 routes return 503 without a charge when the terminal is down'
   refunds: 'None published. On-chain USDC settlement is final; no refund, dispute or credit mechanism is documented anywhere on the host.'
   source: https://api.flowhomes.eu/.well-known/x402#resources
+x-canonical:
+  generated: '2026-10-08'
+  vocabulary: all/0-working/economics/plans-canonical.yml
+  models:
+  - free
+  units: []
+  plans:
+  - name: Free discovery and routing
+    access: other
+    model: free
+    model_how: derived
+    units: []
+    periods: []
+  - name: Pay-per-call (x402, USDC on Base)
+    access: other
+    model: unstated
+    model_how: derived
+    units: []
+    periods: []
