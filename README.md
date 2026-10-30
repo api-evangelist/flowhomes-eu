@@ -64,21 +64,143 @@
 > Full detail: **[Where this data comes from](https://apievangelist.com/about/where-our-data-comes-from)**
 <!-- API-EVANGELIST-PROVENANCE:END -->
 
-Qorevia ("Qorevia Market Intelligence", operated from api.flowhomes.eu) is an agent-native, pay-per-call API seller: thirteen deterministic market-intelligence, data-profiling and developer utility tools — live XAUUSD (gold) quote, OHLCV bars and market state from a read-only MetaTrader 5 terminal, session state, risk levels, a strategy grade, tick PnL, CSV/JSON profiling, JWT decode, EVM address syntax and regex testing — each priced $0.0025–$0.05 and settled per call in USDC on Base Mainnet through x402 v2. No accounts, no API keys. The registrable domain flowhomes.eu serves no website (TLS handshake fails; HTTP returns Cloudflare error 1001), so every surface lives on api.flowhomes.eu.
+Qorevia ("Qorevia Market Intelligence", operated from api.flowhomes.eu) is an agent-native, pay-per-call API seller: thirteen deterministic market-intelligence, data-profiling and developer utility tools — live XAUUSD (gold) quote, OHLCV bars and computed market state read from a read-only MetaTrader 5 terminal, trading-session state in Europe/Vienna time, stop/target risk levels, a strategy robustness grade, tick PnL, OHLCV state, CSV and JSON structural profiling, JWT decode, EVM address syntax and regex testing — each priced between $0.0025 and $0.05 and settled per call in USDC on Base Mainnet (eip155:8453) through the x402 v2 protocol (HTTP 402 -> pay -> retry with PAYMENT-SIGNATURE), with no accounts and no API keys. Discovery is free and unusually complete: an OpenAPI 3.1.0 contract at /openapi.json, an x402 manifest at /.well-known/x402, a remote MCP server at /mcp (four free finder/router/catalog tools, listed in the Official MCP Registry), an A2A 1.0 agent card at /.well-known/agent-card.json backed by a live JSON-RPC endpoint at /a2a, a skill.md, an llms.txt, a natural-language finder (/api/find) and a "Founders Network" whose tiers derive from verified x402 payment history. The registrable domain flowhomes.eu does not serve a website (TLS handshake fails; HTTP returns Cloudflare error 1001), so every surface lives on api.flowhomes.eu.
 
-What this profile found (2026-09-19):
+**Areas:** Market Data · Gold · XAUUSD · Trading · Finance · Quantitative Research · Risk Management · Data Profiling · Developer Tools · x402 · USDC · Base L2
 
-- **Contract** — OpenAPI 3.1.0 "Qorevia Market Intelligence" 2.0.0 at `https://api.flowhomes.eu/openapi.json`: 34 paths, 13 priced operations with operationIds, examples and an `x-payment-info` block (402 + 503 declared), 21 free discovery/club paths without operationIds. Saved verbatim in `openapi/`.
-- **x402** — a v2 service manifest at `/.well-known/x402` (one rail: USDC on eip155:8453, facilitator payai.network; 13 priced + 24 free resources) and a live 402 with a `PAYMENT-REQUIRED` header decoded and recorded in `conformance/`, `errors/`, `authentication/` and `plans/`.
-- **MCP** — a remote Streamable HTTP server at `/mcp` answering initialize (2025-06-18) and tools/list anonymously with four free discovery tools; listed in the Official MCP Registry. Details in `mcp/` with a crosswalk to the REST routes.
-- **A2A** — a 1.0-shaped agent card at `/.well-known/agent-card.json` (ten skills; the legacy `agent.json` is byte-identical), graded conformant, with a live JSON-RPC endpoint at `/a2a` that completed a `message/send`. See `a2a/`.
-- **Agent docs** — provider-authored `skill.md` and `llms.txt` saved verbatim in `skills/` and `llms/`; two generated skills grounded in the spec's operationIds.
-- **Absent** — security.txt, OAuth/OIDC/RFC 9728 metadata, api-catalog, APIs.json, terms, privacy, contact, SDKs, rate limits, idempotency, refunds, status page. Each absence is recorded with the probe that established it.
+## Qorevia on APIs.io
 
-Links:
+Everything profiled for Qorevia is published on APIs.io rather than in this repository. Start at the provider page — **[apis.io/providers/flowhomes-eu/](https://apis.io/providers/flowhomes-eu/)** — or go straight to one of the APIs or properties below.
 
-- Website / API host: https://api.flowhomes.eu/
-- OpenAPI: https://api.flowhomes.eu/openapi.json
-- skill.md: https://api.flowhomes.eu/skill.md
-- x402 manifest: https://api.flowhomes.eu/.well-known/x402
-- MCP: https://api.flowhomes.eu/mcp · A2A card: https://api.flowhomes.eu/.well-known/agent-card.json
+### APIs (24)
+
+- [Qorevia Universal Agent Gateway (MCP + A2A)](https://apis.io/apis/flowhomes-eu/qorevia-universal-agent-gateway/) — The free discovery and routing layer in front of the paid tools, served from the same origin. MCP: https://api.flowhomes.eu/mcp is POST-only Streamable HTTP…
+- [Qorevia A2a API](https://apis.io/apis/flowhomes-eu/flowhomes-eu-a2a-api/) — The A2a API from Qorevia — 1 operation(s) for a2a.
+- [Qorevia Amplifier API](https://apis.io/apis/flowhomes-eu/flowhomes-eu-amplifier-api/) — The Amplifier API from Qorevia — 1 operation(s) for amplifier.
+- [Qorevia Backtest API](https://apis.io/apis/flowhomes-eu/flowhomes-eu-backtest-api/) — The backtest API from Qorevia — 1 operation(s) for backtest.
+- [Qorevia Catalog API](https://apis.io/apis/flowhomes-eu/flowhomes-eu-catalog-api/) — The Catalog API from Qorevia — 1 operation(s) for catalog.
+- [Qorevia Club API](https://apis.io/apis/flowhomes-eu/flowhomes-eu-club-api/) — The Club API from Qorevia — 6 operation(s) for club.
+- [Qorevia CSV API](https://apis.io/apis/flowhomes-eu/flowhomes-eu-csv-api/) — The CSV API from Qorevia — 1 operation(s) for csv.
+- [Qorevia Data API](https://apis.io/apis/flowhomes-eu/flowhomes-eu-data-api/) — The data API from Qorevia — 2 operation(s) for data.
+- [Qorevia Developer Tools API](https://apis.io/apis/flowhomes-eu/flowhomes-eu-developer-tools-api/) — The developer-tools API from Qorevia — 2 operation(s) for developer-tools.
+- [Qorevia Distribution API](https://apis.io/apis/flowhomes-eu/flowhomes-eu-distribution-api/) — The Distribution API from Qorevia — 1 operation(s) for distribution.
+- [Qorevia Finance API](https://apis.io/apis/flowhomes-eu/flowhomes-eu-finance-api/) — The finance API from Qorevia — 7 operation(s) for finance.
+- [Qorevia Find API](https://apis.io/apis/flowhomes-eu/flowhomes-eu-find-api/) — The Find API from Qorevia — 1 operation(s) for find.
+- [Qorevia Gold API](https://apis.io/apis/flowhomes-eu/flowhomes-eu-gold-api/) — The gold API from Qorevia — 3 operation(s) for gold.
+- [Qorevia JSON API](https://apis.io/apis/flowhomes-eu/flowhomes-eu-json-api/) — The JSON API from Qorevia — 1 operation(s) for json.
+- [Qorevia Magnet API](https://apis.io/apis/flowhomes-eu/flowhomes-eu-magnet-api/) — The Magnet API from Qorevia — 2 operation(s) for magnet.
+- [Qorevia MCP API](https://apis.io/apis/flowhomes-eu/flowhomes-eu-mcp-api/) — The Mcp API from Qorevia — 1 operation(s) for mcp.
+- [Qorevia Onchain API](https://apis.io/apis/flowhomes-eu/flowhomes-eu-onchain-api/) — The onchain API from Qorevia — 1 operation(s) for onchain.
+- [Qorevia Quant API](https://apis.io/apis/flowhomes-eu/flowhomes-eu-quant-api/) — The quant API from Qorevia — 1 operation(s) for quant.
+- [Qorevia Risk API](https://apis.io/apis/flowhomes-eu/flowhomes-eu-risk-api/) — The risk API from Qorevia — 1 operation(s) for risk.
+- [Qorevia Route API](https://apis.io/apis/flowhomes-eu/flowhomes-eu-route-api/) — The Route API from Qorevia — 1 operation(s) for route.
+- [Qorevia Trading API](https://apis.io/apis/flowhomes-eu/flowhomes-eu-trading-api/) — The trading API from Qorevia — 1 operation(s) for trading.
+- [Qorevia Try API](https://apis.io/apis/flowhomes-eu/flowhomes-eu-try-api/) — The Try API from Qorevia — 1 operation(s) for try.
+- [Qorevia Utility API](https://apis.io/apis/flowhomes-eu/flowhomes-eu-utility-api/) — The utility API from Qorevia — 5 operation(s) for utility.
+- [Qorevia .well Known API](https://apis.io/apis/flowhomes-eu/flowhomes-eu-well-known-api/) — The .well Known API from Qorevia — 5 operation(s) for .well known.
+
+### Published properties
+
+Each property below is a page on APIs.io carrying the machine-readable artifact and what it says.
+
+#### MCP servers (1)
+
+Model Context Protocol servers that expose the API to agents.
+
+- [flowhomes-eu-mcp.yml](https://apis.io/servers/flowhomes-eu/flowhomes-eu-mcp-yml/)
+
+#### Agentic access (1)
+
+Which operations an agent can call, which act, and which need a human in the loop.
+
+- [Flowhomes Eu Agentic Access](https://apis.io/agentic-access/flowhomes-eu/flowhomes-eu-agentic-access/)
+
+#### Overlays (1)
+
+OpenAPI overlays, including conversational phrasing for each operation.
+
+- [Flowhomes Eu Openapi Overlay](https://apis.io/overlays/flowhomes-eu/flowhomes-eu-openapi-overlay/)
+
+#### Security (2)
+
+Authentication, trust centre, and vulnerability disclosure.
+
+- [Flowhomes Eu Authentication](https://apis.io/security/flowhomes-eu/flowhomes-eu-authentication/)
+- [Flowhomes Eu Domain Security](https://apis.io/security/flowhomes-eu/flowhomes-eu-domain-security/)
+
+#### Plans and pricing (1)
+
+Published plans, tiers and prices.
+
+- [Flowhomes Eu Plans Pricing](https://apis.io/plans/flowhomes-eu/flowhomes-eu-plans-pricing/)
+
+#### Rate limits (1)
+
+Published request limits.
+
+- [Flowhomes Eu Rate Limits](https://apis.io/rate-limits/flowhomes-eu/flowhomes-eu-rate-limits/)
+
+## Where to find this API
+
+Links to the company's own pages. This repository publishes no copy of their specifications — the canonical document is theirs and lives at the URLs below.
+
+- [Website](https://api.flowhomes.eu/)
+- [Documentation](https://api.flowhomes.eu/skill.md)
+- [Getting started](https://api.flowhomes.eu/api/try)
+- [API reference](https://api.flowhomes.eu/)
+- [Pricing](https://api.flowhomes.eu/)
+
+## API Evangelist rating
+
+**Kin Score 36.1** — thin · rubric 0.25.0 · scored 2026-10-23
+
+| Facet | Score |
+|---|---|
+| Discoverability | 63.3 |
+| Contract quality | 41.1 |
+| Contract governance | 18.2 |
+| Operational transparency | 15.8 |
+| Developer ergonomics | 47.6 |
+| Access clarity | 31.6 |
+
+**Agent readiness 39.6** — agent-ready (gated down from agent-native)
+
+| Agent-readiness dimension | Result |
+|---|---|
+| Spec Presence | yes |
+| Agentic Access | derived (partial credit) |
+| Reversibility Documented | — |
+| MCP Server | documented (partial credit) |
+| Auth Clarity | bearer (partial credit) |
+| Idempotency | — |
+| Error Semantics | derived (partial credit) |
+| OpenAPI Examples | verified |
+| Rate Limit Signal | documented (partial credit) |
+| Event Surface Described | — |
+| Agent Skills | yes |
+| Well Known Catalog | — |
+| Consent Identity | — |
+| Agent Card | conformant |
+| Dry Run Mode | — |
+| Delegated Identity | — |
+| Protected Resource Metadata | — |
+| Dynamic Client Registration | — |
+| Agentic Commerce | — |
+| Pagination Ratio | na |
+| Operation Distinctiveness | distinct |
+
+**Regulatory alignment 21.3** — Securities & Market Data
+
+The rubric is published at [github.com/api-evangelist/kin-score](https://github.com/api-evangelist/kin-score). The per-check breakdown behind these numbers — which checks were earned, partial or missed — along with score history and how this provider compares to its peers, is available at [apis.io/providers/flowhomes-eu/](https://apis.io/providers/flowhomes-eu/).
+
+## How this profile is made
+
+API Evangelist profiles a company's public API surface the way a developer would find it: the website, developer portal and documentation, the specifications it publishes, its public repositories, and its pricing, status and changelog pages. From that it derives the properties above — contracts split per API, workflows, schemas, collections, governance rules, plans and rate limits — and scores them against the published [Kin Score rubric](https://github.com/api-evangelist/kin-score).
+
+The artifacts are published on [APIs.io](https://apis.io), not in this repository. This repository is the public record for Qorevia: the place to say something is wrong, missing or out of date, and to ask for a re-score or a removal.
+
+## Open an issue
+
+- **Something about this listing** — a wrong description, a missing API, a stale artifact or a question about the rating: [open an issue on this repository](https://github.com/api-evangelist/flowhomes-eu/issues/new).
+- **A new API, or one that is not in the catalog yet** — [submit it on APIs.io](https://apis.io/add/).
+- **Anything else** — [the APIs.io inbox](https://github.com/api-search/inbox/issues/new) or [info@apievangelist.com](mailto:info@apievangelist.com).
